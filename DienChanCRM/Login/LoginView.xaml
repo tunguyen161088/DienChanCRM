@@ -1,0 +1,42 @@
+﻿<Page x:Class="DienChanCRM.Login.LoginView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" ShowsNavigationUI="False" Loaded="LoginView_OnLoaded"
+      FocusManager.FocusedElement="{Binding ElementName=TxtUsername}"
+      Title="Login View">
+    <DockPanel>
+        <DockPanel.Background>
+            <ImageBrush ImageSource="../Images/wallpaper.jpg" Stretch="Fill"/>
+        </DockPanel.Background>
+        <Border Background="#AAAA" BorderBrush="#000000" BorderThickness="4,4,4,4" CornerRadius="8,8,8,8" Width="500" Height="300" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Margin="100 60 0 0" FontFamily="Verdana" 
+                               FontSize="15" FontWeight="Bold">Username:</Label>
+                    <TextBox Name="TxtUsername" Margin="20,60,0,0" Height="20" Width="150" Text="{Binding UserName}" KeyDown="TxtUsername_OnKeyDown">
+                    </TextBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Margin="100 10 0 0" FontFamily="Verdana" 
+                               FontSize="15" FontWeight="Bold">Password:</Label>
+                    <PasswordBox Margin="22,10,0,0" Height="20" Width="150" Name="TxtPassword" KeyDown="TxtPassword_OnKeyDown">
+                    </PasswordBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Button Name="BttLogin" Margin="140,20,0,0" Width="100" Height="25" 
+                    Content="Login" Click="BttLogin_OnClick"></Button>
+                    <Button Name="BttClose"  Margin="20,20,0,0" Width="100" Height="25" 
+                    Content="Close" Click="BttClose_OnClick"></Button>
+                </StackPanel>
+                <Label Margin="100,20,0,0" Height="30" Content="{Binding ErrorMessage}" FontFamily="Verdana" FontSize="15" FontWeight="Bold" 
+                       Foreground="Red"></Label>
+                <StackPanel Orientation="Horizontal">
+                    <Label Margin="300,40,0,0" FontFamily="Verdana" FontSize="15" FontWeight="Bold">Version:</Label>
+                    <Label Margin="0,40,0,0" Content="{Binding Version}" FontFamily="Verdana" FontSize="15" FontWeight="Bold"></Label>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </DockPanel>
+</Page>
