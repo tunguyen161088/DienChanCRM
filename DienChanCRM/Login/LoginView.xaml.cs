@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using DienChanCRM.DAL;
+using DienChanCRM.Helpers;
 using DienChanCRM.Main;
 using DienChanCRM.Models;
 
@@ -36,7 +27,7 @@ namespace DienChanCRM.Login
 
             _vm = new LoginViewModel
             {
-                Version = ConfigurationManager.AppSettings["Version"]
+                Version = Configuration.Version
             };
 
             DataContext = _vm;

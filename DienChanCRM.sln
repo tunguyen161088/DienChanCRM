@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DienChanCRM", "DienChanCRM\DienChanCRM.csproj", "{62EC97A4-80D3-49B7-8E8B-FD1C2E1A1D32}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportPDFTest", "ExportPDFTest\ExportPDFTest.csproj", "{AED03DED-1306-48EA-BC0A-E3BAC1389AFE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{62EC97A4-80D3-49B7-8E8B-FD1C2E1A1D32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62EC97A4-80D3-49B7-8E8B-FD1C2E1A1D32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62EC97A4-80D3-49B7-8E8B-FD1C2E1A1D32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AED03DED-1306-48EA-BC0A-E3BAC1389AFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AED03DED-1306-48EA-BC0A-E3BAC1389AFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AED03DED-1306-48EA-BC0A-E3BAC1389AFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AED03DED-1306-48EA-BC0A-E3BAC1389AFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

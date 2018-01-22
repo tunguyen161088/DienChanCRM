@@ -4,11 +4,224 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DienChanCRM.Main"
+      xmlns:converters="clr-namespace:DienChanCRM.Converters"
+      xmlns:dienChanCrm="clr-namespace:DienChanCRM"
       mc:Ignorable="d" Background="LightGray"
       d:DesignHeight="960" d:DesignWidth="1500"
-      Title="Main View">
+      Title="Main View"
+      dienChanCrm:ViewModelLocator.AutoWireViewModel="True">
+    <Page.Resources>
+        <converters:BoolToMultiVisibilityConverter x:Key="NewButtonConverter" IsNewButton="True"/>
+        <converters:BoolToMultiVisibilityConverter x:Key="EditButtonConverter" IsEditButton="True"/>
+        <converters:BoolToMultiVisibilityConverter x:Key="SaveButtonConverter" IsSaveButton="True"/>
+        <converters:BoolToNotBoolConverter x:Key="BoolToNotBoolConverter"/>
 
-    <Grid>
-        
-    </Grid>
+        <Style TargetType="Label">
+            <Setter Property="FontSize" Value="25"></Setter>
+            <Setter Property="FontWeight" Value="Bold"></Setter>
+            <Setter Property="FontFamily" Value="Arial"></Setter>
+            <Setter Property="Width" Value="300"></Setter>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="25"></Setter>
+            <Setter Property="FontWeight" Value="Bold"></Setter>
+            <Setter Property="FontFamily" Value="Arial"></Setter>
+            <Setter Property="Width" Value="270"></Setter>
+            <Setter Property="Height" Value="40"></Setter>
+            <Setter Property="Margin" Value="13,0,0,0"></Setter>
+        </Style>
+
+        <!--<Style TargetType="ComboBox">
+            <Setter Property="FontSize" Value="25"></Setter>
+            <Setter Property="FontWeight" Value="Bold"></Setter>
+            <Setter Property="FontFamily" Value="Arial"></Setter>
+            <Setter Property="Width" Value="300"></Setter>
+        </Style>-->
+
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="25"></Setter>
+            <Setter Property="FontWeight" Value="Bold"></Setter>
+            <Setter Property="FontFamily" Value="Arial"></Setter>
+            <Setter Property="Width" Value="120"></Setter>
+            <Setter Property="Height" Value="40"></Setter>
+            <Setter Property="Margin" Value="10,10,0,10"></Setter>
+        </Style>
+
+        <Style TargetType="ListBox">
+            <Setter Property="FontSize" Value="25"></Setter>
+            <Setter Property="FontWeight" Value="Bold"></Setter>
+            <Setter Property="FontFamily" Value="Arial"></Setter>
+            <Setter Property="Width" Value="400"></Setter>
+            <Setter Property="Height" Value="670"></Setter>
+            <Setter Property="Margin" Value="5,10,0,10"></Setter>
+        </Style>
+
+        <Style TargetType="RadioButton">
+            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+            <Setter Property="FontSize" Value="12"></Setter>
+            <Setter Property="FontWeight" Value="Bold"></Setter>
+            <Setter Property="FontFamily" Value="Arial"></Setter>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="2" ScaleY="2"></ScaleTransform>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+    <Viewbox>
+        <Grid >
+            <TabControl>
+                <TabItem Header="Income">
+                    <Grid Margin="5" Background="LightGray">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="450"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Name="LblMessage" Content="{Binding Message}" Grid.ColumnSpan="2"></Label>
+                            <StackPanel>
+                                <Label>Hello Tu</Label>
+                            </StackPanel>
+                        </StackPanel>
+                        <GroupBox Margin="10,10,5,10" FontSize="16" FontWeight="Bold" Grid.Row="1">
+                            <GroupBox.Header>
+                                History
+                            </GroupBox.Header>
+
+                            <StackPanel>
+                                <!--<StackPanel Orientation="Horizontal" Height="60">
+                                    <RadioButton Margin="10,5,0,0" GroupName="OrderCustomer">Order</RadioButton>
+                                    <RadioButton Margin="70,5,0,0" GroupName="OrderCustomer">Customer</RadioButton>
+                                </StackPanel>-->
+                                <StackPanel Orientation="Horizontal" Height="60">
+                                    <TextBox Name="TxtSearch" 
+                                         Text="{Binding TextSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                    <Button Name="BttSearch" Content="Search"></Button>
+                                </StackPanel>
+                                <ListBox Name="LbxOrder"></ListBox>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Margin="5,10,10,10" FontSize="16" FontWeight="Bold" Grid.Row="1" Grid.Column="1">
+                            <GroupBox.Header>
+                                Order
+                            </GroupBox.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="290"/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="60"/>
+                                    <RowDefinition Height="60"/>
+                                    <RowDefinition Height="60"/>
+                                    <RowDefinition Height="60"/>
+                                    <RowDefinition Height="60"/>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="70"/>
+                                </Grid.RowDefinitions>
+                                <Label Content="First Name"></Label>
+                                <TextBox Text="{Binding Order.Customer.FirstName}" Grid.Column="1" 
+                                         IsReadOnly="{Binding IsCreatingOrder, Converter={StaticResource BoolToNotBoolConverter}}"></TextBox>
+                                <Label Content="Last Name" Grid.Column="2"></Label>
+                                <TextBox Text="{Binding Order.Customer.LastName}" Grid.Column="3"></TextBox>
+                                <Label Content="Phone" Grid.Row="1"></Label>
+                                <TextBox Text="{Binding Order.Customer.Phone}" Grid.Row="1" Grid.Column="1"
+                                         IsReadOnly="{Binding IsCreatingOrder, Converter={StaticResource BoolToNotBoolConverter}}"></TextBox>
+                                <Label Content="Email" Grid.Row="1" Grid.Column="2"></Label>
+                                <TextBox Text="{Binding Order.Customer.Email}" Grid.Row="1" Grid.Column="3"
+                                         IsReadOnly="{Binding IsCreatingOrder, Converter={StaticResource BoolToNotBoolConverter}}"></TextBox>
+                                <Label Content="Address 1" Grid.Row="2"></Label>
+                                <TextBox Text="{Binding Order.Customer.Address1}" Grid.Row="2" Grid.Column="1"
+                                         IsReadOnly="{Binding IsCreatingOrder, Converter={StaticResource BoolToNotBoolConverter}}"></TextBox>
+                                <Label Content="Address 2" Grid.Row="2" Grid.Column="2"></Label>
+                                <TextBox Text="{Binding Order.Customer.Address2}" Grid.Row="2" Grid.Column="3"
+                                         IsReadOnly="{Binding IsCreatingOrder, Converter={StaticResource BoolToNotBoolConverter}}"></TextBox>
+                                <Label Content="City" Grid.Row="3"></Label>
+                                <TextBox Text="{Binding Order.Customer.City}" Grid.Row="3" Grid.Column="1"
+                                         IsReadOnly="{Binding IsCreatingOrder, Converter={StaticResource BoolToNotBoolConverter}}"></TextBox>
+                                <Label Content="Zip Code" Grid.Row="3" Grid.Column="2"></Label>
+                                <TextBox Text="{Binding Order.Customer.Zip}" Grid.Row="3" Grid.Column="3"
+                                         IsReadOnly="{Binding IsCreatingOrder, Converter={StaticResource BoolToNotBoolConverter}}"></TextBox>
+                                <Label Content="State" Grid.Row="4"></Label>
+                                <TextBox Text="{Binding Order.Customer.State}" Grid.Row="4" Grid.Column="1"
+                                         IsReadOnly="{Binding IsCreatingOrder, Converter={StaticResource BoolToNotBoolConverter}}"></TextBox>
+                                <Label Content="Country" Grid.Row="4" Grid.Column="2"></Label>
+                                <TextBox Text="{Binding Order.Customer.Country}" Grid.Row="4" Grid.Column="3"
+                                         IsReadOnly="{Binding IsCreatingOrder, Converter={StaticResource BoolToNotBoolConverter}}"></TextBox>
+                                <StackPanel Grid.Row="5" Grid.ColumnSpan="4">
+                                    <StackPanel Orientation="Horizontal" Height="50">
+                                        <Button Command="{Binding AddItemCommand}" Content="Add Item" Width="200"></Button>
+                                        <Label Content="{Binding AddItemMessage}"></Label>
+                                    </StackPanel>
+                                    <DataGrid></DataGrid>
+                                </StackPanel>
+                                <StackPanel Grid.Row="6" Grid.ColumnSpan="4" Orientation="Horizontal">
+                                    <Button Command="{Binding NewOrderCommand}" Content="New Order" Width="200">
+                                        <Button.Visibility>
+                                            <MultiBinding Converter="{StaticResource NewButtonConverter}">
+                                                <Binding Path="IsCreatingOrder" UpdateSourceTrigger="PropertyChanged"></Binding>
+                                                <Binding Path="IsShowingOrder" UpdateSourceTrigger="PropertyChanged"></Binding>
+                                            </MultiBinding>
+                                        </Button.Visibility>
+                                    </Button>
+                                    <Button Command="{Binding EditOrderCommand}" Content="Edit Order" Width="200">
+                                        <Button.Visibility>
+                                            <MultiBinding Converter="{StaticResource EditButtonConverter}">
+                                                <Binding Path="IsCreatingOrder" UpdateSourceTrigger="PropertyChanged"></Binding>
+                                                <Binding Path="IsShowingOrder" UpdateSourceTrigger="PropertyChanged"></Binding>
+                                            </MultiBinding>
+                                        </Button.Visibility>
+                                    </Button>
+                                    <Button Command="{Binding SaveOrderCommand}" Content="Save Order" Width="200">
+                                        <Button.Visibility>
+                                            <MultiBinding Converter="{StaticResource SaveButtonConverter}">
+                                                <Binding Path="IsCreatingOrder" UpdateSourceTrigger="PropertyChanged"></Binding>
+                                                <Binding Path="IsShowingOrder" UpdateSourceTrigger="PropertyChanged"></Binding>
+                                            </MultiBinding>
+                                        </Button.Visibility>
+                                    </Button>
+                                    <Button Command="{Binding CancelOrderCommand}" Content="Cancel Order" Width="200">
+                                        <Button.Visibility>
+                                            <MultiBinding Converter="{StaticResource SaveButtonConverter}">
+                                                <Binding Path="IsCreatingOrder" UpdateSourceTrigger="PropertyChanged"></Binding>
+                                                <Binding Path="IsShowingOrder" UpdateSourceTrigger="PropertyChanged"></Binding>
+                                            </MultiBinding>
+                                        </Button.Visibility>
+                                    </Button>
+                                    <Button Command="{Binding ClearOrderCommand}" Content="Clear Order" Width="200">
+                                        <Button.Visibility>
+                                            <MultiBinding Converter="{StaticResource SaveButtonConverter}">
+                                                <Binding Path="IsCreatingOrder" UpdateSourceTrigger="PropertyChanged"></Binding>
+                                                <Binding Path="IsShowingOrder" UpdateSourceTrigger="PropertyChanged"></Binding>
+                                            </MultiBinding>
+                                        </Button.Visibility>
+                                    </Button>
+                                    <Button Command="{Binding ExportPDFCommand}" Content="Export PDF" Width="200">
+                                        <Button.Visibility>
+                                            <MultiBinding Converter="{StaticResource EditButtonConverter}">
+                                                <Binding Path="IsCreatingOrder" UpdateSourceTrigger="PropertyChanged"></Binding>
+                                                <Binding Path="IsShowingOrder" UpdateSourceTrigger="PropertyChanged"></Binding>
+                                            </MultiBinding>
+                                        </Button.Visibility>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Outcome">
+
+                </TabItem>
+                <TabItem Header="Finance">
+
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Viewbox>
 </Page>
