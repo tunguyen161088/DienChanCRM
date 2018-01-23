@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using DienChanCRM.DAL;
 using DienChanCRM.Helpers;
 using DienChanCRM.Models;
 using DienChanCRM.Product;
+using DienChanCRM.ViewModels;
 
 namespace DienChanCRM.Main
 {
     public class MainViewModel : ViewModelBase
     {
         private readonly PDFHelper _helper;
+        private readonly OrderQuery _orderQuery;
         public RelayCommand NewOrderCommand { get; }
         public RelayCommand EditOrderCommand { get; }
         public RelayCommand SaveOrderCommand { get; }
@@ -16,15 +24,18 @@ namespace DienChanCRM.Main
         public RelayCommand ClearOrderCommand { get; }
         public RelayCommand ExportPDFCommand { get; }
         public RelayCommand AddItemCommand { get; }
+        public RelayCommand RemoveItemCommand { get; }
+        public RelayCommand SearchCommand { get; }
 
 
         public MainViewModel()
         {
             _helper = new PDFHelper();
+            _orderQuery = new OrderQuery();
 
             _order = new OrderViewModel
             {
-                Items = new List<Item>(),
+                Items = new ObservableCollection<ItemViewModel>(),
                 Customer = new CustomerViewModel()
             };
 
@@ -35,6 +46,21 @@ namespace DienChanCRM.Main
             ClearOrderCommand = new RelayCommand(OnClearOrder);
             ExportPDFCommand = new RelayCommand(OnExportPDF);
             AddItemCommand = new RelayCommand(OnAddItem);
+            RemoveItemCommand = new RelayCommand(OnRemoveItem);
+            SearchCommand = new RelayCommand(OnSearch);
+        }
+
+        private ObservableCollection<OrderViewModel> _orders;
+
+        public ObservableCollection<OrderViewModel> Orders
+        {
+            get => _orders;
+            set
+            {
+                _orders = value;
+
+                OnPropertyChanged("Orders");
+            }
         }
 
         private OrderViewModel _order;
@@ -44,6 +70,9 @@ namespace DienChanCRM.Main
             set
             {
                 _order = value;
+
+                IsShowingOrder = _order != null && _order.ID != 0;
+
                 OnPropertyChanged("Order");
             }
         }
@@ -94,6 +123,17 @@ namespace DienChanCRM.Main
             }
         }
 
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged("IsLoading");
+            }
+        }
+
         public User User { get; set; }
 
         private void OnNewOrder()
@@ -103,28 +143,80 @@ namespace DienChanCRM.Main
 
         private void OnEditOrder()
         {
+            if (MessageBox.Show("Are you sure to remove this order?", "Confirmation", MessageBoxButton.YesNo,
+                    MessageBoxImage.Question) != MessageBoxResult.Yes) return;
 
+            _orderQuery.DeleteOrder(Order.ID);
+
+            OnClearOrder();
+
+            OnSearch();
         }
 
         private void OnSaveOrder()
         {
-            IsCreatingOrder = false;
+            if (Order.Items.Count == 0)
+            {
+                MessageBox.Show("You need to add at least 1 item!");
 
-            IsShowingOrder = true;
+                return;
+            }
+
+            if (string.IsNullOrEmpty(Order.Customer.FirstName))
+            {
+                MessageBox.Show("You need to enter your first name!");
+
+                return;
+            }
+
+            if (string.IsNullOrEmpty(Order.Customer.LastName))
+            {
+                MessageBox.Show("You need to enter your last name!");
+
+                return;
+            }
+
+            if (string.IsNullOrEmpty(Order.Customer.Email))
+            {
+                MessageBox.Show("You need to enter your email!");
+
+                return;
+            }
+
+            Task.Factory.StartNew(() =>
+            {
+                IsLoading = true;
+
+                IsCreatingOrder = false;
+
+                IsShowingOrder = true;
+
+                _orderQuery.UpdateOrder(Order);
+
+                OnClearOrder();
+
+                OnSearch();
+
+                IsLoading = false;
+            });
         }
 
         private void OnCancelOrder()
         {
             IsCreatingOrder = false;
+
+            OnClearOrder();
         }
 
         private void OnClearOrder()
         {
             Order = new OrderViewModel
             {
-                Items = new List<Item>(),
+                Items = new ObservableCollection<ItemViewModel>(),
                 Customer = new CustomerViewModel()
-        };
+            };
+
+            IsShowingOrder = false;
         }
 
         private void OnExportPDF()
@@ -136,7 +228,60 @@ namespace DienChanCRM.Main
         {
             var productView = new ProductSearchView();
 
-            productView.ShowDialog();
+            if (productView.ShowDialog() != true) return;
+
+            var productSearch = ((ProductSearchViewModel)productView.DataContext);
+
+            var selectedProduct = productSearch.SelectedProduct;
+
+            var existItem = Order.Items.SingleOrDefault(i => i.ID == selectedProduct.ID);
+
+            if (existItem != null)
+            {
+                existItem.Quantity += Convert.ToInt32(productSearch.Quantity);
+
+                return;
+            }
+
+            Order.Items.Insert(0, new ItemViewModel
+            {
+                ID = selectedProduct.ID,
+                ItemDescription = selectedProduct.Description,
+                ItemName = selectedProduct.Name,
+                UnitPrice = selectedProduct.Price,
+                Quantity = Convert.ToInt32(productSearch.Quantity),
+                Category = selectedProduct.Category
+            });
+        }
+
+        private void OnRemoveItem()
+        {
+            if (MessageBox.Show("Are you sure to remove this item?", "Confirmation", MessageBoxButton.YesNo,
+                    MessageBoxImage.Question) != MessageBoxResult.Yes) return;
+
+            Order.Items.Remove(Order.SelectedItem);
+
+            Order.SelectedItem = Order.Items.FirstOrDefault();
+        }
+
+        public void OnSearch()
+        {
+            if (DesignerProperties.GetIsInDesignMode(new DependencyObject())) return;
+
+            Task.Factory.StartNew(() =>
+            {
+                IsLoading = true;
+
+                Orders = _orderQuery.GetListOrders(TextSearch);
+
+                Order = Orders?.FirstOrDefault()?? new OrderViewModel
+                {
+                    Items = new ObservableCollection<ItemViewModel>(),
+                    Customer = new CustomerViewModel()
+                };
+
+                IsLoading = false;
+            });
         }
     }
 }

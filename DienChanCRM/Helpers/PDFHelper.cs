@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using DienChanCRM.Main;
+using DienChanCRM.ViewModels;
 using iTextSharp.text.pdf;
 
 namespace DienChanCRM.Helpers
@@ -10,11 +12,13 @@ namespace DienChanCRM.Helpers
     {
         public void ExportPDF(OrderViewModel order)
         {
-            var tempLoc = @"D:\DienChanSaleInvoice.pdf";
+            var tempLoc = AppDomain.CurrentDomain.BaseDirectory + @"Templates\DienChanSaleInvoice.pdf";
+
+            var newFile = tempLoc.Replace(".pdf", "_" + order.ID + ".pdf");
 
             using (var reader = new PdfReader(tempLoc))
             {
-                using (var stamper = new PdfStamper(reader, new FileStream(tempLoc.Replace(".pdf", "_1.pdf"), FileMode.Create, FileAccess.Write)))
+                using (var stamper = new PdfStamper(reader, new FileStream(newFile, FileMode.Create, FileAccess.Write)))
                 {
                     var font = BaseFont.CreateFont();
 
@@ -41,24 +45,23 @@ namespace DienChanCRM.Helpers
 
                     content.SetFontAndSize(font, 16.0f);
                     content.SetTextMatrix(367, 600);
-                    content.ShowText("Order Number: " + "20180001");
+                    content.ShowText("Order Number: " + order.ID);
 
                     content.SetFontAndSize(font, 16.0f);
                     content.SetTextMatrix(340, 570);
-                    content.ShowText("Customer Number: " + "81020001");
+                    content.ShowText("Customer Number: " + FormatCustomer(order.CustomerID));
 
                     content.SetFontAndSize(font, 16.0f);
                     content.SetTextMatrix(400, 540);
                     content.ShowText("Paris, le " + DateTime.Today.ToString("MMM d yyyy"));
 
-                    var posY = 450;
+                    var posY = 485;
                     content.SetFontAndSize(font, 10.0f);
 
-                    for (var i = order.Items.Count - 1; i >= 0; i--)
+                    for (var i = 0 ; i < order.Items.Count; i++)
                     {
-
                         content.SetTextMatrix(70, posY);
-                        content.ShowText(DateTime.Now.ToShortDateString());
+                        content.ShowText(order.Items[i].ID);
 
                         content.SetTextMatrix(130, posY);
                         content.ShowText(order.Items[i].ItemName);
@@ -72,7 +75,7 @@ namespace DienChanCRM.Helpers
                         content.SetTextMatrix(435, posY);
                         content.ShowText((order.Items[i].UnitPrice * order.Items[i].Quantity).ToString("C"));
 
-                        posY += 18;
+                        posY -= 18;
                     }
 
                     content.SetFontAndSize(font, 12.0f);
@@ -83,6 +86,21 @@ namespace DienChanCRM.Helpers
                     content.RestoreState();
                 }
             }
+
+            System.Diagnostics.Process.Start(newFile);
+        }
+
+        private string FormatCustomer(int id)
+        {
+            var result = new StringBuilder();
+            for (var i = 0; i < 8 - id.ToString().Length; i++)
+            {
+                result.Append("0");
+            }
+
+            result.Append(id);
+
+            return result.ToString();
         }
     }
 }

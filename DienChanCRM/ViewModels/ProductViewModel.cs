@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Linq;
-using System.Security.AccessControl;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DienChanCRM.Product
+﻿namespace DienChanCRM.ViewModels
 {
     public class ProductViewModel: ViewModelBase
     {

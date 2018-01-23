@@ -4,29 +4,38 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DienChanCRM.Main"
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
       xmlns:converters="clr-namespace:DienChanCRM.Converters"
       xmlns:dienChanCrm="clr-namespace:DienChanCRM"
       mc:Ignorable="d" Background="LightGray"
-      d:DesignHeight="960" d:DesignWidth="1500"
+      d:DesignHeight="760" d:DesignWidth="1600"
       Title="Main View"
       dienChanCrm:ViewModelLocator.AutoWireViewModel="True">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <ei:CallMethodAction TargetObject="{Binding}" MethodName="OnSearch"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Page.Resources>
         <converters:BoolToMultiVisibilityConverter x:Key="NewButtonConverter" IsNewButton="True"/>
         <converters:BoolToMultiVisibilityConverter x:Key="EditButtonConverter" IsEditButton="True"/>
         <converters:BoolToMultiVisibilityConverter x:Key="SaveButtonConverter" IsSaveButton="True"/>
         <converters:BoolToNotBoolConverter x:Key="BoolToNotBoolConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
         <Style TargetType="Label">
             <Setter Property="FontSize" Value="25"></Setter>
             <Setter Property="FontWeight" Value="Bold"></Setter>
             <Setter Property="FontFamily" Value="Arial"></Setter>
-            <Setter Property="Width" Value="300"></Setter>
+            <Setter Property="Width" Value="150"></Setter>
+            <Setter Property="Margin" Value="0,10,0,0"></Setter>
         </Style>
         <Style TargetType="TextBox">
             <Setter Property="FontSize" Value="25"></Setter>
             <Setter Property="FontWeight" Value="Bold"></Setter>
             <Setter Property="FontFamily" Value="Arial"></Setter>
-            <Setter Property="Width" Value="270"></Setter>
+            <Setter Property="Width" Value="350"></Setter>
             <Setter Property="Height" Value="40"></Setter>
             <Setter Property="Margin" Value="13,0,0,0"></Setter>
         </Style>
@@ -73,21 +82,11 @@
             <TabControl>
                 <TabItem Header="Income">
                     <Grid Margin="5" Background="LightGray">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="50"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="450"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Name="LblMessage" Content="{Binding Message}" Grid.ColumnSpan="2"></Label>
-                            <StackPanel>
-                                <Label>Hello Tu</Label>
-                            </StackPanel>
-                        </StackPanel>
-                        <GroupBox Margin="10,10,5,10" FontSize="16" FontWeight="Bold" Grid.Row="1">
+                        <GroupBox Margin="10,10,5,10" FontSize="16" FontWeight="Bold">
                             <GroupBox.Header>
                                 History
                             </GroupBox.Header>
@@ -98,11 +97,16 @@
                                     <RadioButton Margin="70,5,0,0" GroupName="OrderCustomer">Customer</RadioButton>
                                 </StackPanel>-->
                                 <StackPanel Orientation="Horizontal" Height="60">
-                                    <TextBox Name="TxtSearch" 
-                                         Text="{Binding TextSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                    <Button Name="BttSearch" Content="Search"></Button>
+                                    <TextBox Name="TxtSearch" Width="270"
+                                         Text="{Binding TextSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                        <TextBox.InputBindings>
+                                            <KeyBinding Key="Enter" Command="{Binding SearchCommand}"></KeyBinding>
+                                        </TextBox.InputBindings>
+                                    </TextBox>
+                                    <Button Name="BttSearch" Content="Search" Command="{Binding SearchCommand}"></Button>
                                 </StackPanel>
-                                <ListBox Name="LbxOrder"></ListBox>
+                                <ListBox ItemsSource="{Binding Orders}" SelectedItem="{Binding Order}"
+                                         SelectedValuePath="ID" DisplayMemberPath="ID"></ListBox>
                             </StackPanel>
                         </GroupBox>
                         <GroupBox Margin="5,10,10,10" FontSize="16" FontWeight="Bold" Grid.Row="1" Grid.Column="1">
@@ -111,9 +115,9 @@
                             </GroupBox.Header>
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="40"/>
                                     <ColumnDefinition Width="290"/>
-                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="40"/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
@@ -155,11 +159,44 @@
                                 <TextBox Text="{Binding Order.Customer.Country}" Grid.Row="4" Grid.Column="3"
                                          IsReadOnly="{Binding IsCreatingOrder, Converter={StaticResource BoolToNotBoolConverter}}"></TextBox>
                                 <StackPanel Grid.Row="5" Grid.ColumnSpan="4">
-                                    <StackPanel Orientation="Horizontal" Height="50">
-                                        <Button Command="{Binding AddItemCommand}" Content="Add Item" Width="200"></Button>
-                                        <Label Content="{Binding AddItemMessage}"></Label>
+                                    <StackPanel Orientation="Horizontal" Height="60">
+                                        <Button Command="{Binding AddItemCommand}" Content="Add Item" Width="200"
+                                                IsEnabled="{Binding IsCreatingOrder}"></Button>
+                                        <Label Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}" Content="Loading..." 
+                                               Foreground="Green" Margin="15,10,0,0" FontWeight="Bold"></Label>
                                     </StackPanel>
-                                    <DataGrid></DataGrid>
+                                    <DataGrid Height="300" Margin="5" ItemsSource="{Binding Order.Items}" SelectedItem="{Binding Order.SelectedItem}"
+                                              AutoGenerateColumns="False" CanUserAddRows="False" Width="1250">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Reference" Binding="{Binding Path=ID}" 
+                                                                Width="100" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="Name" Binding="{Binding Path=ItemName}" 
+                                                                Width="200" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="Description" Binding="{Binding Path=ItemDescription}" 
+                                                                Width="450" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="Category" Binding="{Binding Path=Category}" 
+                                                                Width="100" IsReadOnly="True"/>
+                                            <DataGridTextColumn Header="Quantity" Binding="{Binding Path=Quantity, UpdateSourceTrigger=PropertyChanged}" 
+                                                                Width="100"/>
+                                            <DataGridTextColumn Header="Price" Binding="{Binding Path=UnitPrice, UpdateSourceTrigger=PropertyChanged}" 
+                                                                Width="100"/>
+                                            <DataGridTextColumn Header="Sub Total" Binding="{Binding Path=SubTotal}" 
+                                                                Width="100" IsReadOnly="True"/>
+                                            <DataGridTemplateColumn Header="Delete">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Button Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},
+                                                            Path=DataContext.RemoveItemCommand}" CommandParameter="{Binding}"
+                                                                IsEnabled="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}},
+                                                            Path=DataContext.IsCreatingOrder}"
+                                                                Width="80" FontSize="15" Height="25" Margin="2">
+                                                            Delete
+                                                        </Button>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
                                 </StackPanel>
                                 <StackPanel Grid.Row="6" Grid.ColumnSpan="4" Orientation="Horizontal">
                                     <Button Command="{Binding NewOrderCommand}" Content="New Order" Width="200">
@@ -170,7 +207,7 @@
                                             </MultiBinding>
                                         </Button.Visibility>
                                     </Button>
-                                    <Button Command="{Binding EditOrderCommand}" Content="Edit Order" Width="200">
+                                    <Button Command="{Binding EditOrderCommand}" Content="Delete Order" Width="200">
                                         <Button.Visibility>
                                             <MultiBinding Converter="{StaticResource EditButtonConverter}">
                                                 <Binding Path="IsCreatingOrder" UpdateSourceTrigger="PropertyChanged"></Binding>
@@ -215,12 +252,12 @@
                         </GroupBox>
                     </Grid>
                 </TabItem>
-                <TabItem Header="Outcome">
+                <!--<TabItem Header="Outcome">
 
                 </TabItem>
                 <TabItem Header="Finance">
 
-                </TabItem>
+                </TabItem>-->
             </TabControl>
         </Grid>
     </Viewbox>

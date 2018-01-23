@@ -5,6 +5,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DienChanCRM.Product"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
         xmlns:converters="clr-namespace:DienChanCRM.Converters"
         xmlns:dienChanCrm="clr-namespace:DienChanCRM"
         Background="LightGray"
@@ -73,7 +75,7 @@
                 <ColumnDefinition Width="220"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <ListBox Name="LbxOrder" SelectedItem="{Binding SelectedProduct}" 
+            <ListBox SelectedItem="{Binding SelectedProduct}" 
                      SelectedValuePath="ID" DisplayMemberPath="Name"
                      ItemsSource="{Binding Products}"></ListBox>
             <Grid Grid.Column="1">
@@ -108,10 +110,18 @@
                 <Label Content="{Binding SelectedProduct.Price}" Grid.Column="1" Grid.Row="4"></Label>
 
                 <Label Content="Quantity:" Grid.Row="5"></Label>
-                <TextBox Text="{Binding Quantity}" Margin="10,2,424,2" Width="50" Grid.Column="1" Grid.Row="5"></TextBox>
+                <TextBox Text="{Binding Quantity,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                         Margin="10,2,424,2" Width="50" Grid.Column="1" Grid.Row="5">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="TextChanged">
+                            <i:InvokeCommandAction Command="{Binding SetQuantityCommand}"></i:InvokeCommandAction>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </TextBox>
 
                 <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal">
-                    <Button Margin="300,0,0,0" Command="{Binding SelectProductCommand}">Select</Button>
+                    <Button Margin="300,0,0,0" Command="{Binding SelectProductCommand}" IsEnabled="{Binding IsSelected}"
+                            CommandParameter="{Binding ElementName=ProductSearch}">Select</Button>
                     <Button Command="{Binding CloseCommand}" CommandParameter="{Binding ElementName=ProductSearch}">Close</Button>
                 </StackPanel>
             </Grid>

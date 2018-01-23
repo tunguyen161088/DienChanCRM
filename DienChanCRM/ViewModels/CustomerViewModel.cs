@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using DienChanCRM.Models;
 
-namespace DienChanCRM.Main
+namespace DienChanCRM.ViewModels
 {
     public class CustomerViewModel : ViewModelBase
     {

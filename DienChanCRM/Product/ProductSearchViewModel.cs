@@ -7,22 +7,27 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using DienChanCRM.DAL;
+using DienChanCRM.Helpers;
+using DienChanCRM.ViewModels;
 
 namespace DienChanCRM.Product
 {
     public class ProductSearchViewModel : ViewModelBase
     {
         public RelayCommand SearchCommand { get; }
-        public RelayCommand SelectProductCommand { get; }
+        public RelayCommand<Window> SelectProductCommand { get; }
         public RelayCommand<Window> CloseCommand { get; }
+        public RelayCommand SetQuantityCommand { get; }
 
         private readonly ProductQuery _productQuery;
 
         public ProductSearchViewModel()
         {
             SearchCommand = new RelayCommand(OnSearch);
-            SelectProductCommand = new RelayCommand(OnSelectProduct);
+            SelectProductCommand = new RelayCommand<Window>(OnSelectProduct);
             CloseCommand = new RelayCommand<Window>(OnClose);
+            SetQuantityCommand = new RelayCommand(OnSetQuantity);
+            Quantity = "0";
             _productQuery = new ProductQuery();
         }
 
@@ -46,6 +51,11 @@ namespace DienChanCRM.Product
             set
             {
                 _selectedProduct = value;
+
+                int qty;
+
+                IsSelected = _selectedProduct != null && int.TryParse(_quantity, out qty) && qty > 0;
+
                 OnPropertyChanged("SelectedProduct");
             }
         }
@@ -61,13 +71,18 @@ namespace DienChanCRM.Product
             }
         }
 
-        private int _quantity;
-        public int Quantity
+        private string _quantity;
+        public string Quantity
         {
             get => _quantity;
             set
             {
                 _quantity = value;
+
+                int qty;
+
+                IsSelected = _selectedProduct != null && int.TryParse(_quantity, out qty) && qty > 0;
+
                 OnPropertyChanged("Quantity");
             }
         }
@@ -83,14 +98,34 @@ namespace DienChanCRM.Product
             }
         }
 
-        private void OnClose(Window window)
+        private bool _isSelected;
+
+        public bool IsSelected
         {
-            window?.Close();
+            get => _isSelected;
+            set
+            {
+                _isSelected = value;
+                OnPropertyChanged("IsSelected");
+            }
         }
 
-        private void OnSelectProduct()
+        private void OnClose(Window window)
         {
+            if (window == null) return;
 
+            window.DialogResult = false;
+
+            window.Close();
+        }
+
+        private void OnSelectProduct(Window window)
+        {
+            if (window == null) return;
+
+            window.DialogResult = true;
+
+            window.Close();
         }
 
         private void OnSearch()
@@ -101,7 +136,7 @@ namespace DienChanCRM.Product
             {
                 IsLoading = true;
 
-                Products = MapProductModelToViewModel(_productQuery.SearchProducts(TextSearch));
+                Products = MapHelper.MapProductModelToViewModel(_productQuery.SearchProducts(TextSearch));
 
                 SelectedProduct = Products?.FirstOrDefault();
 
@@ -110,22 +145,13 @@ namespace DienChanCRM.Product
 
         }
 
-        private ObservableCollection<ProductViewModel> MapProductModelToViewModel(List<Models.Product> products)
+        private void OnSetQuantity()
         {
-            var result = new ObservableCollection<ProductViewModel>();
+            int qty;
 
-            products.ForEach(p =>
-                result.Add(new ProductViewModel
-                {
-                    ID = p.ID,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    Weight = p.Weight,
-                    Category = p.Category
-                }));
+            if (int.TryParse(Quantity, out qty)) return;
 
-            return result;
+            Quantity = "0";
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using DienChanCRM.Models;
 
-namespace DienChanCRM.Main
+namespace DienChanCRM.ViewModels
 {
     public class OrderViewModel: ViewModelBase
     {
@@ -14,6 +16,28 @@ namespace DienChanCRM.Main
             {
                 _customer = value;
                 OnPropertyChanged("Customer");
+            }
+        }
+
+        private ObservableCollection<ItemViewModel> _items;
+        public ObservableCollection<ItemViewModel> Items
+        {
+            get => _items;
+            set
+            {
+                _items = value;
+                OnPropertyChanged("Items");
+            }
+        }
+
+        private ItemViewModel _selectedItem;
+        public ItemViewModel SelectedItem
+        {
+            get => _selectedItem;
+            set
+            {
+                _selectedItem = value;
+                OnPropertyChanged("SelectedItem");
             }
         }
 
@@ -41,10 +65,12 @@ namespace DienChanCRM.Main
 
         public int ID { get; set; }
 
-        public List<Item> Items { get; set; }
-
         public decimal SubTotal { get; set; }
 
         public decimal OrderTotal { get; set; }
+
+        public DateTime OrderDate { get; set; }
+
+        public int CustomerID { get; set; }
     }
 }
