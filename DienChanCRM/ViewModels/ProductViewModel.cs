@@ -68,5 +68,28 @@
                 OnPropertyChanged("Category");
             }
         }
+
+        private int _categoryID;
+
+        public int CategoryID
+        {
+            get => _categoryID;
+            set
+            {
+                _categoryID = value;
+                OnPropertyChanged("CategoryID");
+            }
+        }
+
+        private int _reference;
+        public int Reference
+        {
+            get => _reference;
+            set
+            {
+                _reference = value;
+                OnPropertyChanged("Reference");
+            }
+        }
     }
 }

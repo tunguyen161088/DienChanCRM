@@ -17,6 +17,8 @@ namespace DienChanCRM.Main
     {
         private readonly PDFHelper _helper;
         private readonly OrderQuery _orderQuery;
+        private readonly ProductQuery _productQuery;
+
         public RelayCommand NewOrderCommand { get; }
         public RelayCommand EditOrderCommand { get; }
         public RelayCommand SaveOrderCommand { get; }
@@ -26,12 +28,16 @@ namespace DienChanCRM.Main
         public RelayCommand AddItemCommand { get; }
         public RelayCommand RemoveItemCommand { get; }
         public RelayCommand SearchCommand { get; }
+        public RelayCommand RemoveProductCommand { get; }
+        public RelayCommand UpdateProductCommand { get; }
+        public RelayCommand AddProductCommand { get; }
 
 
         public MainViewModel()
         {
             _helper = new PDFHelper();
             _orderQuery = new OrderQuery();
+            _productQuery = new ProductQuery();
 
             _order = new OrderViewModel
             {
@@ -48,6 +54,54 @@ namespace DienChanCRM.Main
             AddItemCommand = new RelayCommand(OnAddItem);
             RemoveItemCommand = new RelayCommand(OnRemoveItem);
             SearchCommand = new RelayCommand(OnSearch);
+            AddProductCommand = new RelayCommand(OnAddProduct);
+            RemoveProductCommand = new RelayCommand(OnRemoveProduct);
+            UpdateProductCommand = new RelayCommand(OnUpdateProduct);
+
+            GetProducts();
+        }
+
+        private void OnRemoveProduct()
+        {
+            if (MessageBox.Show("Are you sure to remove this product?", "Confirmation", MessageBoxButton.YesNo,
+                    MessageBoxImage.Question) != MessageBoxResult.Yes) return;
+
+            _productQuery.RemoveProduct(Product.ID);
+
+            GetProducts();
+        }
+
+        private void OnUpdateProduct()
+        {
+            if (string.IsNullOrEmpty(Product.ID) || string.IsNullOrEmpty(Product.Name) ||
+                string.IsNullOrEmpty(Product.Description) || Product.Price == 0m || Product.Weight == 0m)
+            {
+                MessageBox.Show("You need to fill out all the fields");
+
+                Product = new ProductViewModel { CategoryID = 1 };
+
+                return;
+            }
+
+            _productQuery.UpdateProduct(MapHelper.MapProductViewModelToModel(Product));
+
+            GetProducts();
+        }
+
+        private void OnAddProduct()
+        {
+            if (!Products.Any() || !string.IsNullOrEmpty(Products.FirstOrDefault()?.ID))
+                Products.Insert(0, new ProductViewModel { CategoryID = 1 });
+        }
+
+        public void GetProducts()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                Products = MapHelper.MapProductModelToViewModel(_productQuery.GetProducts());
+
+                Product = Products?.FirstOrDefault();
+            });
         }
 
         private ObservableCollection<OrderViewModel> _orders;
@@ -64,6 +118,7 @@ namespace DienChanCRM.Main
         }
 
         private OrderViewModel _order;
+
         public OrderViewModel Order
         {
             get => _order;
@@ -78,6 +133,7 @@ namespace DienChanCRM.Main
         }
 
         private string _message;
+
         public string Message
         {
             get => _message;
@@ -101,6 +157,7 @@ namespace DienChanCRM.Main
         }
 
         private bool _isCreatingOrder;
+
         public bool IsCreatingOrder
         {
             get => _isCreatingOrder;
@@ -124,6 +181,7 @@ namespace DienChanCRM.Main
         }
 
         private bool _isLoading;
+
         public bool IsLoading
         {
             get => _isLoading;
@@ -134,11 +192,41 @@ namespace DienChanCRM.Main
             }
         }
 
+        private ObservableCollection<ProductViewModel> _products;
+
+        public ObservableCollection<ProductViewModel> Products
+        {
+            get => _products;
+            set
+            {
+                _products = value;
+                OnPropertyChanged("Products");
+            }
+        }
+
+        private ProductViewModel _product;
+
+        public ProductViewModel Product
+        {
+            get => _product;
+            set
+            {
+                _product = value;
+                OnPropertyChanged("Product");
+            }
+        }
+
         public User User { get; set; }
 
         private void OnNewOrder()
         {
             IsCreatingOrder = true;
+
+            Order = Order ?? new OrderViewModel
+            {
+                Items = new ObservableCollection<ItemViewModel>(),
+                Customer = new CustomerViewModel()
+            };
         }
 
         private void OnEditOrder()
@@ -274,7 +362,7 @@ namespace DienChanCRM.Main
 
                 Orders = _orderQuery.GetListOrders(TextSearch);
 
-                Order = Orders?.FirstOrDefault()?? new OrderViewModel
+                Order = Orders?.FirstOrDefault() ?? new OrderViewModel
                 {
                     Items = new ObservableCollection<ItemViewModel>(),
                     Customer = new CustomerViewModel()

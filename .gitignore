@@ -260,3 +260,4 @@ paket-files/
 __pycache__/
 *.pyc
 /DienChanCRM/Detail.config
+/DienChanCRM/App.config

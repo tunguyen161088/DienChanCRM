@@ -6,10 +6,10 @@
       mc:Ignorable="d" ShowsNavigationUI="False" Loaded="LoginView_OnLoaded"
       FocusManager.FocusedElement="{Binding ElementName=TxtUsername}"
       Title="Login View">
-    <DockPanel>
-        <DockPanel.Background>
+    <DockPanel Background="LightBlue">
+        <!--<DockPanel.Background>
             <ImageBrush ImageSource="../Images/wallpaper.jpg" Stretch="Fill"/>
-        </DockPanel.Background>
+        </DockPanel.Background>-->
         <Border Background="#AAAA" BorderBrush="#000000" BorderThickness="4,4,4,4" CornerRadius="8,8,8,8" Width="500" Height="300" HorizontalAlignment="Center" VerticalAlignment="Center">
             <StackPanel>
                 <StackPanel Orientation="Horizontal">

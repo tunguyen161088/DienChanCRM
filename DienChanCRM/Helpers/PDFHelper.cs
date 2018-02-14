@@ -53,7 +53,7 @@ namespace DienChanCRM.Helpers
 
                     content.SetFontAndSize(font, 16.0f);
                     content.SetTextMatrix(400, 540);
-                    content.ShowText("Paris, le " + DateTime.Today.ToString("MMM d yyyy"));
+                    content.ShowText("Paris, le " + order.OrderDate.ToString("MMM d yyyy"));
 
                     var posY = 485;
                     content.SetFontAndSize(font, 10.0f);

@@ -20,6 +20,7 @@ SELECT TOP 50 [ID],
               [Price],
               [Weight],
               [CategoryID],
+              [Reference],
 (
     SELECT CategoryName
     FROM Category
@@ -31,6 +32,43 @@ WHERE ID = @0
       OR Description LIKE '%' + @0+'%'", textSearch);
 
             return Db().Fetch<Models.Product>(query);
+        }
+
+        public List<Models.Product> GetProducts()
+        {
+            var query = Sql.Builder.Append(@"
+SELECT [ID],
+              [Name],
+              [Description],
+              [Price],
+              [Weight],
+              [CategoryID],
+              [Reference],
+(
+    SELECT CategoryName
+    FROM Category
+    WHERE ID = CategoryID
+) AS Category
+FROM [DienChanCRM].[dbo].[Products]");
+
+            return Db().Fetch<Models.Product>(query);
+        }
+
+        public void RemoveProduct(string productId)
+        {
+            var query = Sql.Builder.Append(@"
+DELETE FROM [DienChanCRM].[dbo].[Products]
+WHERE ID = @0", productId);
+
+            Db().Execute(query);
+        }
+
+        public void UpdateProduct(Models.Product product)
+        {
+            if (Db().ExecuteScalar<int>(@"Select COUNT(*) FROM [DienChanCRM].[dbo].[Products] WHERE Reference = @0", product.Reference) > 0)
+                Db().Update(product);
+            else
+                Db().Insert(product);
         }
     }
 }

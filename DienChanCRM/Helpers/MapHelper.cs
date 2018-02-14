@@ -29,7 +29,24 @@ namespace DienChanCRM.Helpers
                 Description = product.Description,
                 Price = product.Price,
                 Weight = product.Weight,
-                Category = product.Category
+                Category = product.Category,
+                CategoryID = product.CategoryID,
+                Reference = product.Reference
+            };
+        }
+
+        public static Models.Product MapProductViewModelToModel(ProductViewModel product)
+        {
+            return new Models.Product
+            {
+                ID = product.ID,
+                Name = product.Name,
+                Description = product.Description, 
+                Price = product.Price,
+                Weight = product.Weight,
+                Category = product.Category,
+                CategoryID = product.CategoryID,
+                Reference = product.Reference
             };
         }
 
