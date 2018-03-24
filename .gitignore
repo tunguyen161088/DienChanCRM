@@ -261,3 +261,7 @@ __pycache__/
 *.pyc
 /DienChanCRM/Detail.config
 /DienChanCRM/App.config
+/DienChanAPI/Detail.Release.config
+/DienChanAPI/Detail.Debug.config
+/DienChanAPI/Detail.config
+/DienChan.DataAccess/QueryBase.cs

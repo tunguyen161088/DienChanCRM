@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DienChan.Logic
 {
-    public class Class1
+    class CustomersLogic
     {
     }
 }

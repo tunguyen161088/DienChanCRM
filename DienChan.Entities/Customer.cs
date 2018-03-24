@@ -21,4 +21,3 @@ namespace DienChan.Entities
         public string country { get; set; }
     }
 }
-}

@@ -1,39 +1,71 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
+﻿using System.Web.Http;
+using DienChan.Entities;
+using DienChan.Logic;
 
 namespace DienChanAPI.Controllers
 {
     public class ProductsController : ApiController
     {
-        // GET api/<controller>
-        public IEnumerable<string> Get()
+        [HttpGet]
+        public IHttpActionResult GetProducts()
         {
-            return new string[] { "value1", "value2" };
+            var products = ProductsLogic.GetProducts();
+
+            if (products == null)
+                return NotFound();
+
+            return Ok(products);
         }
 
-        // GET api/<controller>/5
-        public string Get(int id)
+        [HttpGet]
+        public IHttpActionResult GetProduct(int id)
         {
-            return "value";
+            var product = ProductsLogic.GetProduct(id);
+
+            if (product == null)
+                return NotFound();
+
+            return Ok(product);
         }
 
-        // POST api/<controller>
-        public void Post([FromBody]string value)
+        [HttpPut]
+        public IHttpActionResult UpdateProduct(Product product)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var productDb = ProductsLogic.GetProduct(product.productId);
+
+            if (productDb == null)
+                return NotFound();
+
+            ProductsLogic.UpdateProduct(product);
+
+            return Ok();
         }
 
-        // PUT api/<controller>/5
-        public void Put(int id, [FromBody]string value)
+        [HttpPost]
+        public IHttpActionResult CreateProduct(Product product)
         {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            ProductsLogic.CreateProduct(product);
+
+            return Ok();
         }
 
-        // DELETE api/<controller>/5
-        public void Delete(int id)
+        [HttpDelete]
+        public IHttpActionResult DeleteProduct(int id)
         {
+            var product = ProductsLogic.GetProduct(id);
+
+            if (product == null)
+                return NotFound();
+
+            ProductsLogic.DeleteProduct(id);
+
+            return Ok();
         }
     }
 }

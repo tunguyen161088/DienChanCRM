@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DienChan.DataAccess
 {
-    public class Class1
+    public class CustomersQuery: QueryBase
     {
     }
 }
