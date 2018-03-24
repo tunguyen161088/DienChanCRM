@@ -15,19 +15,14 @@ namespace DienChan.DataAccess
         {
             var query = Sql.Builder.Append(@"
 SELECT TOP 1
-        *
-FROM [User]
+        u.*, p.*
+FROM [DienChanCRM].[dbo].[User] u
+INNER JOIN [DienChanCRM].[dbo].[UserPermission] p ON u.PermissionID = p.ID
 WHERE Username = @0
 AND Password = @1
 AND Active = 1", userName, password);
 
-            var user = Db().SingleOrDefault<User>(query);
-
-            if (user == null) return null;
-
-            user.permission = GetPermission(user.id);
-
-            return user;
+            return Db().Fetch<User, UserPermission>(query).FirstOrDefault();
         }
 
         private UserPermission GetPermission(int userId)

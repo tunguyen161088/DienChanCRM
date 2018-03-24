@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PetaPoco;
 
 namespace DienChan.Entities
 {
@@ -13,7 +14,8 @@ namespace DienChan.Entities
         public string username { get; set; }
 
         public string password { get; set; }
-
+        public int permissionId { get; set; }
+        [Ignore]
         public UserPermission permission { get; set; }
 
         public string firstName { get; set; }
@@ -29,8 +31,8 @@ namespace DienChan.Entities
     {
         public int id { get; set; }
 
-        public string pemissionName { get; set; }
+        public string permissionName { get; set; }
 
-        public string pemissionDescription { get; set; }
+        public string permissionDescription { get; set; }
     }
 }

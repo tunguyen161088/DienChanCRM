@@ -29,8 +29,8 @@ namespace DienChanAPI.Controllers
                 permission = new UserPermission
                 {
                     id = 2,
-                    pemissionDescription = "Admin",
-                    pemissionName = "Admin"
+                    permissionDescription = "Admin",
+                    permissionName = "Admin"
                 }
             };
         }
