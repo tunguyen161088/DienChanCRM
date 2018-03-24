@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System.Net;
+using System.Web.Http;
 using DienChan.Entities;
 using DienChan.Logic;
 
@@ -12,9 +13,9 @@ namespace DienChanAPI.Controllers
             var products = ProductsLogic.GetProducts();
 
             if (products == null)
-                return NotFound();
+                return Content(HttpStatusCode.NotFound, "NotFound");
 
-            return Ok(products);
+            return Content(HttpStatusCode.OK, products);
         }
 
         [HttpGet]
@@ -23,36 +24,44 @@ namespace DienChanAPI.Controllers
             var product = ProductsLogic.GetProduct(id);
 
             if (product == null)
-                return NotFound();
+                return Content(HttpStatusCode.NotFound, "NotFound");
 
-            return Ok(product);
+            return Content(HttpStatusCode.OK, product);
         }
 
         [HttpPut]
         public IHttpActionResult UpdateProduct(Product product)
         {
             if (!ModelState.IsValid)
-                return BadRequest();
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
 
             var productDb = ProductsLogic.GetProduct(product.productId);
 
             if (productDb == null)
-                return NotFound();
+                return Content(HttpStatusCode.NotFound, "NotFound");
 
-            ProductsLogic.UpdateProduct(product);
+            var result = ProductsLogic.UpdateProduct(product);
 
-            return Ok();
+            return result.Success 
+                ? Content(HttpStatusCode.OK, "OK") 
+                : Content(HttpStatusCode.InternalServerError, result.Message);
         }
 
         [HttpPost]
         public IHttpActionResult CreateProduct(Product product)
         {
             if (!ModelState.IsValid)
-                return BadRequest();
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
 
-            ProductsLogic.CreateProduct(product);
+            var result = ProductsLogic.CreateProduct(product);
 
-            return Ok();
+            result.Message = "Test message";
+
+            result.Success = false;
+
+            return result.Success
+                ? Content(HttpStatusCode.OK, "OK")
+                : Content(HttpStatusCode.InternalServerError, result.Message);
         }
 
         [HttpDelete]
@@ -61,11 +70,13 @@ namespace DienChanAPI.Controllers
             var product = ProductsLogic.GetProduct(id);
 
             if (product == null)
-                return NotFound();
+                return Content(HttpStatusCode.NotFound, "NotFound");
 
-            ProductsLogic.DeleteProduct(id);
+            var result = ProductsLogic.DeleteProduct(id);
 
-            return Ok();
+            return result.Success
+                ? Content(HttpStatusCode.OK, "OK")
+                : Content(HttpStatusCode.InternalServerError, result.Message);
         }
     }
 }

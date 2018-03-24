@@ -23,6 +23,6 @@ namespace DienChan.Entities
         [Ignore]
         public string image { get; set; }
         [Ignore]
-        public bool ischangeimage { get; set; }
+        public bool isImageUpdate { get; set; }
     }
 }

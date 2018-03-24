@@ -22,24 +22,37 @@ namespace DienChan.Logic
             return _query.GetProduct(productId);
         }
 
-        public static void CreateProduct(Product product)
+        public static ActionResult CreateProduct(Product product)
         {
+            var result = new ActionResult();
+
             var productId = _query.CreateProduct(product);
 
+            if (productId == 0)
+            {
+                result.Message = "Product create failed!";
+
+                return result;
+            }
+
             ImageHelper.UploadImage(product.image, $"{productId}.jpg");
+
+            result.Success = true;
+
+            return result;
         }
 
-        public static void UpdateProduct(Product product)
+        public static ActionResult UpdateProduct(Product product)
         {
-            if (product.image != null && product.ischangeimage)
+            if (product.image != null && product.isImageUpdate)
                 product.imageUrl = ImageHelper.UploadImage(product.image, $"{product.productId}.jpg");
 
-            _query.UpdateProduct(product);
+            return _query.UpdateProduct(product);
         }
 
-        public static void DeleteProduct(int productId)
+        public static ActionResult DeleteProduct(int productId)
         {
-            _query.DeleteProduct(productId);
+            return _query.DeleteProduct(productId);
         }
     }
 }

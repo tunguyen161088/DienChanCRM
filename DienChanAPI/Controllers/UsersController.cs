@@ -56,9 +56,9 @@ namespace DienChanAPI.Controllers
             var userDb = UsersLogic.GetAuthentication(user.username, user.password);
 
             if (userDb == null)
-                return NotFound();
+                return Content(HttpStatusCode.NotFound, "NotFound");
 
-            return Ok(userDb);
+            return Content(HttpStatusCode.OK, userDb);
         }
     }
 }

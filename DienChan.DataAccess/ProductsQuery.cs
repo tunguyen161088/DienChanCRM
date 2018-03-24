@@ -23,25 +23,50 @@ FROM [DienChanCRM].[dbo].[Products] p (NOLOCK)
         public Product GetProduct(int productId)
         {
             var query = Sql.Builder.Append(@"
-SELECT *
-FROM [DienChanCRM].[dbo].[Products](NOLOCK)
-WHERE ProductID = @0", productId);
+SELECT p.*, c.*
+FROM [DienChanCRM].[dbo].[Products] p (NOLOCK)
+     INNER JOIN [DienChanCRM].[dbo].[Category] c(NOLOCK) ON p.CategoryID = c.ID
+WHERE p.ProductID = @0;", productId);
 
-            return Db().FirstOrDefault<Product>(query);
+            return Db().Fetch<Product, Category>(query).FirstOrDefault();
+
+//            var query = Sql.Builder.Append(@"
+//SELECT *
+//FROM [DienChanCRM].[dbo].[Products](NOLOCK)
+//WHERE ProductID = @0", productId);
+
+//            return Db().FirstOrDefault<Product>(query);
         }
 
-        public void DeleteProduct(int productId)
+        public ActionResult DeleteProduct(int productId)
         {
-            var query = Sql.Builder.Append(@"
+            var result = new ActionResult();
+
+            try
+            {
+                var query = Sql.Builder.Append(@"
 DELETE FROM [DienChanCRM].[dbo].[Products]
 WHERE ProductID = @0", productId);
 
-            Db().Execute(query);
+                Db().Execute(query);
+
+                result.Success = true;
+            }
+            catch (Exception e)
+            {
+                result.Message = "Product delete failed!";
+            }
+
+            return result;
         }
 
-        public void UpdateProduct(Product product)
+        public ActionResult UpdateProduct(Product product)
         {
-            var query = Sql.Builder.Append(@"
+            var result = new ActionResult();
+
+            try
+            {
+                var query = Sql.Builder.Append(@"
 UPDATE [dbo].[Products]
    SET [Name] = @0
       ,[Description] = @1
@@ -50,14 +75,25 @@ UPDATE [dbo].[Products]
       ,[CategoryID] = @4
       ,[ImageUrl] = @5
  WHERE ProductID = @6", product.name, product.description, product.price, product.weight, product.categoryId,
-                product.imageUrl, product.productId);
+                    product.imageUrl, product.productId);
 
-            Db().Execute(query);
+                Db().Execute(query);
+
+                result.Success = true;
+            }
+            catch (Exception e)
+            {
+                result.Message = "Product update failed!";
+            }
+
+            return result;
         }
 
         public int CreateProduct(Product product)
         {
-            var query = Sql.Builder.Append(@"
+            try
+            {
+                var query = Sql.Builder.Append(@"
 INSERT INTO [dbo].[Products]
            ([Name]
            ,[Description]
@@ -71,13 +107,18 @@ INSERT INTO [dbo].[Products]
            ,@3
            ,@4) Select Scope_Identity()", product.name, product.description, product.price, product.weight, product.categoryId);
 
-            var productId = Db().ExecuteScalar<int>(query);
+                var productId = Db().ExecuteScalar<int>(query);
 
-            var imageUrl = Configuration.BaseImageUrl + $"{productId}.jpg";
+                var imageUrl = Configuration.BaseImageUrl + $"{productId}.jpg";
 
-            Db().Execute("Update [dbo].Products Set ImageUrl = @0 Where ProductID = @1", imageUrl, productId);
+                Db().Execute("Update [dbo].Products Set ImageUrl = @0 Where ProductID = @1", imageUrl, productId);
 
-            return productId;
+                return productId;
+            }
+            catch (Exception e)
+            {
+                return 0;
+            }
         }
     }
 }

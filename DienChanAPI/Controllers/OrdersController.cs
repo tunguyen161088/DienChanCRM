@@ -12,14 +12,29 @@ namespace DienChanAPI.Controllers
     public class OrdersController : ApiController
     {
         [HttpGet]
+        public IHttpActionResult SendReport(int orderId, string email)
+        {
+            var order = OrdersLogic.GetOrder(orderId);
+
+            if (order == null)
+                return Content(HttpStatusCode.NotFound, "NotFound");
+
+            var result = OrdersLogic.SendReport(order, email);
+
+            return result.Success
+                ? Content(HttpStatusCode.OK, "OK")
+                : Content(HttpStatusCode.InternalServerError, result.Message);
+        }
+
+        [HttpGet]
         public IHttpActionResult GetOrders()
         {
             var orders = OrdersLogic.GetOrders();
 
             if (orders == null)
-                return NotFound();
+                return Content(HttpStatusCode.NotFound, "NotFound");
 
-            return Ok(orders);
+            return Content(HttpStatusCode.OK, orders);
         }
 
         [HttpGet]
@@ -28,36 +43,40 @@ namespace DienChanAPI.Controllers
             var order = OrdersLogic.GetOrder(id);
 
             if (order == null)
-                return NotFound();
+                return Content(HttpStatusCode.NotFound, "NotFound");
 
-            return Ok(order);
+            return Content(HttpStatusCode.OK, order);
         }
 
         [HttpPut]
         public IHttpActionResult UpdateOrder(Order order)
         {
             if (!ModelState.IsValid)
-                return BadRequest();
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
 
             var orderDb = OrdersLogic.GetOrder(order.orderId);
 
             if (orderDb == null)
-                return NotFound();
+                return Content(HttpStatusCode.NotFound, "NotFound");
 
-            OrdersLogic.UpdateOrder(order);
+            var result = OrdersLogic.UpdateOrder(order);
 
-            return Ok();
+            return result.Success
+                ? Content(HttpStatusCode.OK, "OK")
+                : Content(HttpStatusCode.InternalServerError, result.Message);
         }
 
         [HttpPost]
         public IHttpActionResult CreateOrder(Order order)
         {
             if (!ModelState.IsValid)
-                return BadRequest();
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
 
-            OrdersLogic.CreateOrder(order);
+            var result = OrdersLogic.CreateOrder(order);
 
-            return Ok();
+            return result.Success
+                ? Content(HttpStatusCode.OK, "OK")
+                : Content(HttpStatusCode.InternalServerError, result.Message);
         }
 
         [HttpDelete]
@@ -66,11 +85,13 @@ namespace DienChanAPI.Controllers
             var order = OrdersLogic.GetOrder(id);
 
             if (order == null)
-                return NotFound();
+                return Content(HttpStatusCode.NotFound, "NotFound");
 
-            OrdersLogic.DeleteOrder(id);
+            var result = OrdersLogic.DeleteOrder(id);
 
-            return Ok();
+            return result.Success
+                ? Content(HttpStatusCode.OK, "OK")
+                : Content(HttpStatusCode.InternalServerError, result.Message);
         }
     }
 }

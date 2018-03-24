@@ -42,7 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomersLogic.cs" />
+    <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
+    <Compile Include="Helpers\ReportHelper.cs" />
     <Compile Include="OrdersLogic.cs" />
     <Compile Include="ProductsLogic.cs" />
     <Compile Include="UsersLogic.cs" />
