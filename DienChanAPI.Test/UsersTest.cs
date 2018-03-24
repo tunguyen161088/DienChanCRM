@@ -17,16 +17,26 @@ namespace DienChanAPI.Test
     public class UsersTest
     {
         [TestMethod]
-        public void TestMethod1()
+        public void GetAuthenticationTest()
         {
-            //var url = "http://localhost:56588/api/users/GetAuthentication";
+            var client = new HttpClient();
 
-            //var client = new HttpClient();
+            var pairs = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("username", "admin"),
+                new KeyValuePair<string, string>("password", ComputeHash("abc")),
+            };
 
-            //var content = client.GetStringAsync(url);
+            var content = new FormUrlEncodedContent(pairs);
 
-            //var user = JsonConvert.DeserializeObject<User>(content.Result);
+            var response = client.PostAsync("http://localhost:56588/api/users/GetAuthentication", content);
 
+            var result = response.Result.Content.ReadAsAsync<User>().Result;
+        }
+
+        [TestMethod]
+        public void GetAuthenticationTest2()
+        {
             using (var client = new HttpClient())
             {
                 //client.BaseAddress = new Uri("http://localhost:56588/api/users/GetAuthentication");
@@ -44,31 +54,7 @@ namespace DienChanAPI.Test
             }
         }
 
-        [TestMethod]
-        public void TestMethod2()
-        {
-            var client = new HttpClient();
-
-            var pairs = new List<KeyValuePair<string, string>>
-            {
-                new KeyValuePair<string, string>("username", "admin"),
-                new KeyValuePair<string, string>("password", "test@123")
-            };
-
-            var content = new FormUrlEncodedContent(pairs);
-
-            var response = client.PostAsync("http://localhost:56588/api/users/GetAuthentication", content);
-
-            var result = response.Result.Content.ReadAsAsync<User>().Result;
-        }
-
-        //[TestMethod]
-        //public void TestMethod3()
-        //{
-        //    new UsersLogic().GetAuthentication("admin", ComputeHash("1Nothing"));
-        //}
-
-        private string ComputeHash(string password)
+        private static string ComputeHash(string password)
         {
             using (var md5Hash = MD5.Create())
             {
