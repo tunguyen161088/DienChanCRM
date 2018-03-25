@@ -73,7 +73,7 @@ WHERE o.OrderID = @0 AND Active = 1;", orderId);
             {
                 db.AbortTransaction();
 
-                result.Message = "Order update failed!";
+                result.Message = e.Message;
             }
 
             return result;
@@ -103,7 +103,7 @@ WHERE o.OrderID = @0 AND Active = 1;", orderId);
             {
                 db.AbortTransaction();
 
-                result.Message = "Order create failed!";
+                result.Message = e.Message;
             }
 
             return result;
@@ -126,7 +126,7 @@ UPDATE [dbo].[Orders]
             }
             catch (Exception e)
             {
-                result.Message = "Order delete failed!";
+                result.Message = e.Message;
             }
 
             return result;

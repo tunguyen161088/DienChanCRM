@@ -80,7 +80,7 @@ namespace DienChan.Logic
             }
             catch (Exception e)
             {
-                result.Message = "Email report failed!";
+                result.Message = e.Message;
             }
 
             return result;

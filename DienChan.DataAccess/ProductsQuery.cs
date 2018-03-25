@@ -54,7 +54,7 @@ WHERE ProductID = @0", productId);
             }
             catch (Exception e)
             {
-                result.Message = "Product delete failed!";
+                result.Message = e.Message;
             }
 
             return result;
@@ -83,7 +83,7 @@ UPDATE [dbo].[Products]
             }
             catch (Exception e)
             {
-                result.Message = "Product update failed!";
+                result.Message = e.Message;
             }
 
             return result;

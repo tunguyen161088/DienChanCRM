@@ -26,7 +26,7 @@ namespace DienChan.Logic.Helpers
             {
                 Host = Configuration.HostSmtp,
                 Port = Configuration.HostPort,
-                EnableSsl = true,
+                EnableSsl = false,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
                 Credentials = new NetworkCredential(fromAddress.Address, Configuration.FromPassword)
