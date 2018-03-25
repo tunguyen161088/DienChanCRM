@@ -26,7 +26,7 @@ namespace DienChanAPI.Test
                     city = "Port Jeff",
                     country = "USA",
                     email = "tunguyen161088@gmail.com",
-                    phone = "6319770728",
+                    phoneNumber = "6319770728",
                     state = "NY",
                     zip = "11776",
                     updateDate = DateTime.Now
@@ -119,7 +119,7 @@ namespace DienChanAPI.Test
                     city = "Port Jeff",
                     country = "USA",
                     email = "tunguyen161088@gmail.com",
-                    phone = "6319770728",
+                    phoneNumber = "6319770728",
                     state = "NY",
                     zip = "11776",
                     updateDate = DateTime.Now
@@ -165,6 +165,20 @@ namespace DienChanAPI.Test
             var response = client.PutAsJsonAsync("http://localhost:56588/api/orders/updateorder", order);
 
             var result = response.Result.StatusCode;
+        }
+
+        [TestMethod]
+        public void SendReportTest()
+        {
+            var client = new HttpClient();
+
+            var url = "http://localhost:56588/api/orders/sendreport?orderId=20180001&email=tunguyen161088@gmail.com";
+
+            var result = client.GetAsync(url).Result;
+
+            //var content = client.GetStringAsync(url);
+
+            //var orders = JsonConvert.DeserializeObject<List<Order>>(content.Result);
         }
     }
 }

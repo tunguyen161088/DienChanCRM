@@ -18,5 +18,14 @@ namespace DienChan.DataAccess
         public static string FtpPassword => ConfigurationManager.AppSettings["FtpPassword"] ?? "";
 
         public static string BaseImageUrl => ConfigurationManager.AppSettings["BaseImageUrl"] ?? "";
+
+        public static string FromEmail => ConfigurationManager.AppSettings["FromEmail"] ?? "";
+
+        public static string FromPassword => ConfigurationManager.AppSettings["FromPassword"] ?? "";
+
+        public static string HostSmtp => ConfigurationManager.AppSettings["HostSmtp"] ?? "";
+
+        public static int HostPort => Convert.ToInt32(ConfigurationManager.AppSettings["HostPort"] ?? "0");
+
     }
 }

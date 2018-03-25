@@ -248,6 +248,9 @@
     <Content Include="Detail.Release.config">
       <DependentUpon>Detail.config</DependentUpon>
     </Content>
+    <Content Include="Templates\DienChanSaleInvoice.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

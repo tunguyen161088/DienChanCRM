@@ -25,7 +25,7 @@ UPDATE [dbo].[Customers]
       ,[Zip] = @8
       ,[Country] = @9
       ,[UpdateDate] = @10
- WHERE CustomerID = @11", customer.firstName, customer.lastName, customer.phone, customer.email, customer.address1, customer.address2,
+ WHERE CustomerID = @11", customer.firstName, customer.lastName, customer.phoneNumber, customer.email, customer.address1, customer.address2,
                 customer.city, customer.state, customer.zip, customer.country, customer.updateDate, customer.customerId);
 
             db.Execute(query);
@@ -57,7 +57,7 @@ INSERT INTO [dbo].[Customers]
            ,@7
            ,@8
            ,@9
-           ,@10) Select SCOPE_IDENTITY()", customer.firstName, customer.lastName, customer.phone, customer.email,
+           ,@10) Select SCOPE_IDENTITY()", customer.firstName, customer.lastName, customer.phoneNumber, customer.email,
                 customer.address1, customer.address2, customer.city, customer.state, customer.zip, customer.country, customer.updateDate);
 
             var customerId = db.ExecuteScalar<int>(query);
