@@ -44,7 +44,7 @@ namespace DienChanAPI.Test
                 var user = new User
                 {
                     username = "admin",
-                    password = ComputeHash("1Nothing")
+                    password = ComputeHash("abc")
                 };
 
                 //HTTP POST
