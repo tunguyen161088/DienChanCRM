@@ -31,7 +31,8 @@ INSERT INTO [dbo].[Items]
            ,[Description]
            ,[Weight]
            ,[ImageUrl]
-           ,[UpdateDate])
+           ,[UpdateDate]
+           ,[CategoryName])
      VALUES
            (@0
            ,@1
@@ -42,7 +43,7 @@ INSERT INTO [dbo].[Items]
            ,@6
            ,@7
            ,@8)", orderId, item.quantity, item.unitPrice, item.productId, item.name, 
-                    item.description, item.weight, item.imageUrl, item.updateDate);
+                    item.description, item.weight, item.imageUrl, item.updateDate, item.categoryName);
 
                 db.Execute(query);
             }

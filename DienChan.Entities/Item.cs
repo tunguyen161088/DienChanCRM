@@ -17,5 +17,6 @@ namespace DienChan.Entities
         public decimal unitPrice { get; set; }
         public decimal weight { get; set; }
         public string imageUrl { get; set; }
+        public string categoryName { get; set; }
     }
 }
