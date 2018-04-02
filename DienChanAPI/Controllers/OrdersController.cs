@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using DienChan.Entities;
 using DienChan.Logic;
+using DienChan.Logic.Helpers;
 
 namespace DienChanAPI.Controllers
 {
@@ -88,6 +89,9 @@ namespace DienChanAPI.Controllers
                 return Content(HttpStatusCode.NotFound, "NotFound");
 
             var result = OrdersLogic.DeleteOrder(id);
+
+            if (!result.Success)
+                ApplicationLogHelper.Log(result.Message);
 
             return result.Success
                 ? Content(HttpStatusCode.OK, "OK")
