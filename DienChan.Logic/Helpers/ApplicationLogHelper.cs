@@ -23,6 +23,8 @@ namespace DienChan.Logic.Helpers
                 stacktrace = ""
             };
 
+            new EmailHelper().SendError(log);
+
             _applicationLogQuery.UpdateLog(log);
         }
     }
