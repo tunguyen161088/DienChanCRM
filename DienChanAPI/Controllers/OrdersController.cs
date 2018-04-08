@@ -22,6 +22,9 @@ namespace DienChanAPI.Controllers
 
             var result = OrdersLogic.SendReport(order, email);
 
+            if (!result.Success)
+                ApplicationLogHelper.Log(result.Message);
+
             return result.Success
                 ? Content(HttpStatusCode.OK, "OK")
                 : Content(HttpStatusCode.InternalServerError, result.Message);
@@ -62,6 +65,9 @@ namespace DienChanAPI.Controllers
 
             var result = OrdersLogic.UpdateOrder(order);
 
+            if (!result.Success)
+                ApplicationLogHelper.Log(result.Message);
+
             return result.Success
                 ? Content(HttpStatusCode.OK, "OK")
                 : Content(HttpStatusCode.InternalServerError, result.Message);
@@ -74,6 +80,9 @@ namespace DienChanAPI.Controllers
                 return Content(HttpStatusCode.BadRequest, "BadRequest");
 
             var result = OrdersLogic.CreateOrder(order);
+
+            if (!result.Success)
+                ApplicationLogHelper.Log(result.Message);
 
             return result.Success
                 ? Content(HttpStatusCode.OK, "OK")

@@ -42,5 +42,37 @@ namespace DienChan.Logic.Helpers
                 smtp.Send(message);
             }
         }
+
+        public void SendError(ApplicationLog log)
+        {
+            var fromAddress = new MailAddress(Configuration.FromEmail, "Academie Dien Chan");
+            var toAddress = new MailAddress("tunguyen161088@gmail.com");
+            string subject = $"Error Report {DateTime.Now}";
+            var body = new StringBuilder();
+
+            body.AppendLine($"Message: {log.message}");
+            body.AppendLine($"StackTrace: {log.stacktrace}");
+            body.AppendLine($"Computer Name: {log.computername}");
+            body.AppendLine($"OS Version: {log.osversion}");
+            body.AppendLine($"Create Date: {log.createdate}");
+
+            var smtp = new SmtpClient
+            {
+                Host = Configuration.HostSmtp,
+                Port = Configuration.HostPort,
+                EnableSsl = false,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromAddress.Address, Configuration.FromPassword)
+            };
+            using (var message = new MailMessage(fromAddress, toAddress)
+            {
+                Subject = subject,
+                Body = body.ToString()
+            })
+            {
+                smtp.Send(message);
+            }
+        }
     }
 }

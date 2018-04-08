@@ -2,6 +2,7 @@
 using System.Web.Http;
 using DienChan.Entities;
 using DienChan.Logic;
+using DienChan.Logic.Helpers;
 
 namespace DienChanAPI.Controllers
 {
@@ -42,6 +43,9 @@ namespace DienChanAPI.Controllers
 
             var result = ProductsLogic.UpdateProduct(product);
 
+            if (!result.Success)
+                ApplicationLogHelper.Log(result.Message);
+
             return result.Success 
                 ? Content(HttpStatusCode.OK, "OK") 
                 : Content(HttpStatusCode.InternalServerError, result.Message);
@@ -55,9 +59,8 @@ namespace DienChanAPI.Controllers
 
             var result = ProductsLogic.CreateProduct(product);
 
-            result.Message = "Test message";
-
-            result.Success = false;
+            if (!result.Success)
+                ApplicationLogHelper.Log(result.Message);
 
             return result.Success
                 ? Content(HttpStatusCode.OK, "OK")
@@ -73,6 +76,9 @@ namespace DienChanAPI.Controllers
                 return Content(HttpStatusCode.NotFound, "NotFound");
 
             var result = ProductsLogic.DeleteProduct(id);
+
+            if (!result.Success)
+                ApplicationLogHelper.Log(result.Message);
 
             return result.Success
                 ? Content(HttpStatusCode.OK, "OK")
