@@ -42,7 +42,8 @@ INSERT INTO [dbo].[Items]
            ,@5
            ,@6
            ,@7
-           ,@8)", orderId, item.quantity, item.unitPrice, item.productId, item.name, 
+           ,@8
+           ,@9)", orderId, item.quantity, item.unitPrice, item.productId, item.name, 
                     item.description, item.weight, item.imageUrl, item.updateDate, item.categoryName);
 
                 db.Execute(query);
