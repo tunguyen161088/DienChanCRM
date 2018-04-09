@@ -29,7 +29,8 @@ namespace DienChan.Logic
             if (product.productId == 0)
                 return result;
 
-            ImageHelper.UploadImage(product.image, $"{product.productId}.jpg");
+            if (string.IsNullOrEmpty(product.image) && product.isImageUpdate)
+                ImageHelper.UploadImage(product.image, $"{product.productId}.jpg");
 
             return result;
         }

@@ -15,7 +15,8 @@ namespace DienChan.DataAccess
             var query = Sql.Builder.Append(@"
 SELECT p.*, c.*
 FROM [DienChanCRM].[dbo].[Products] p (NOLOCK)
-     INNER JOIN [DienChanCRM].[dbo].[Category] c(NOLOCK) ON p.CategoryID = c.ID;");
+     INNER JOIN [DienChanCRM].[dbo].[Category] c(NOLOCK) ON p.CategoryID = c.ID 
+WHERE ACTIVE = 1;");
 
             return Db().Fetch<Product, Category>(query);
         }
@@ -26,7 +27,8 @@ FROM [DienChanCRM].[dbo].[Products] p (NOLOCK)
 SELECT p.*, c.*
 FROM [DienChanCRM].[dbo].[Products] p (NOLOCK)
      INNER JOIN [DienChanCRM].[dbo].[Category] c(NOLOCK) ON p.CategoryID = c.ID
-WHERE p.ProductID = @0;", productId);
+WHERE p.ProductID = @0
+AND ACTIVE = 1;", productId);
 
             return Db().Fetch<Product, Category>(query).FirstOrDefault();
 
@@ -45,7 +47,8 @@ WHERE p.ProductID = @0;", productId);
             try
             {
                 var query = Sql.Builder.Append(@"
-DELETE FROM [DienChanCRM].[dbo].[Products]
+UPDATE [DienChanCRM].[dbo].[Products]
+SET ACTIVE = 0
 WHERE ProductID = @0", productId);
 
                 Db().Execute(query);
@@ -101,13 +104,15 @@ INSERT INTO [dbo].[Products]
            ,[Description]
            ,[Price]
            ,[Weight]
-           ,[CategoryID])
+           ,[CategoryID]
+           ,[Active])
      VALUES
            (@0
            ,@1
            ,@2
            ,@3
-           ,@4) Select Scope_Identity()", product.name, product.description, product.price, product.weight, product.categoryId);
+           ,@4
+           ,1) Select Scope_Identity()", product.name, product.description, product.price, product.weight, product.categoryId);
 
                 var productId = Db().ExecuteScalar<int>(query);
 
