@@ -24,20 +24,12 @@ namespace DienChan.Logic
 
         public static ActionResult CreateProduct(Product product)
         {
-            var result = new ActionResult();
+            var result = _query.CreateProduct(product);
 
-            var productId = _query.CreateProduct(product);
-
-            if (productId == 0)
-            {
-                result.Message = "Product create failed!";
-
+            if (product.productId == 0)
                 return result;
-            }
 
-            ImageHelper.UploadImage(product.image, $"{productId}.jpg");
-
-            result.Success = true;
+            ImageHelper.UploadImage(product.image, $"{product.productId}.jpg");
 
             return result;
         }

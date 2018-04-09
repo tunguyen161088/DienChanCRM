@@ -89,8 +89,10 @@ UPDATE [dbo].[Products]
             return result;
         }
 
-        public int CreateProduct(Product product)
+        public ActionResult CreateProduct(Product product)
         {
+            var result = new ActionResult();
+
             try
             {
                 var query = Sql.Builder.Append(@"
@@ -113,12 +115,16 @@ INSERT INTO [dbo].[Products]
 
                 Db().Execute("Update [dbo].Products Set ImageUrl = @0 Where ProductID = @1", imageUrl, productId);
 
-                return productId;
+                product.productId = productId;
+
+                result.Success = true;
             }
             catch (Exception e)
             {
-                return 0;
+                result.Message = e.Message;
             }
+
+            return result;
         }
     }
 }
