@@ -29,7 +29,7 @@ namespace DienChan.Logic
             if (product.productId == 0)
                 return result;
 
-            if (string.IsNullOrEmpty(product.image) && product.isImageUpdate)
+            if (!string.IsNullOrEmpty(product.image) && product.isImageUpdate)
                 ImageHelper.UploadImage(product.image, $"{product.productId}.jpg");
 
             return result;
@@ -37,8 +37,12 @@ namespace DienChan.Logic
 
         public static ActionResult UpdateProduct(Product product)
         {
-            if (product.image != null && product.isImageUpdate)
-                product.imageUrl = ImageHelper.UploadImage(product.image, $"{product.productId}.jpg");
+            if (!string.IsNullOrEmpty(product.image) && product.isImageUpdate)
+            {
+                ImageHelper.RemoveOldImage(product.imageUrl);
+
+                product.imageUrl = ImageHelper.UploadImage(product.image, $"{product.productId}_{Guid.NewGuid()}.jpg");
+            }
 
             return _query.UpdateProduct(product);
         }

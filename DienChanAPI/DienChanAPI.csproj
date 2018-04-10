@@ -241,15 +241,15 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Templates\DienChanSaleInvoice.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Detail.config" />
     <Content Include="Detail.Debug.config">
       <DependentUpon>Detail.config</DependentUpon>
     </Content>
     <Content Include="Detail.Release.config">
       <DependentUpon>Detail.config</DependentUpon>
-    </Content>
-    <Content Include="Templates\DienChanSaleInvoice.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>

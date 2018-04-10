@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using DienChan.DataAccess;
+using DienChan.Entities;
 
 namespace DienChan.Logic.Helpers
 {
@@ -80,6 +81,18 @@ namespace DienChan.Logic.Helpers
             }
 
             return squareImage;
+        }
+
+        public static void RemoveOldImage(string imageUrl)
+        {
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(Configuration.FtpUrl + imageUrl.Replace(Configuration.BaseImageUrl, ""));
+            request.Method = WebRequestMethods.Ftp.DeleteFile;
+            request.Credentials = new NetworkCredential(Configuration.FtpUsername, Configuration.FtpPassword);
+
+            using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
+            {
+                var result = response.StatusDescription;
+            }
         }
     }
 }
