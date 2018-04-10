@@ -85,14 +85,25 @@ namespace DienChan.Logic.Helpers
 
         public static void RemoveOldImage(string imageUrl)
         {
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(Configuration.FtpUrl + imageUrl.Replace(Configuration.BaseImageUrl, ""));
-            request.Method = WebRequestMethods.Ftp.DeleteFile;
-            request.Credentials = new NetworkCredential(Configuration.FtpUsername, Configuration.FtpPassword);
-
-            using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
+            try
             {
-                var result = response.StatusDescription;
+                var url = Configuration.FtpUrl + imageUrl.Replace(Configuration.BaseImageUrl, "");
+
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(url);
+                request.Method = WebRequestMethods.Ftp.DeleteFile;
+                request.Credentials = new NetworkCredential(Configuration.FtpUsername, Configuration.FtpPassword);
+
+                using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
+                {
+                    var result = response.StatusDescription;
+                }
             }
+            catch (Exception e)
+            {
+                //
+            }
+
+
         }
     }
 }
