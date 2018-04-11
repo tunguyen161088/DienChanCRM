@@ -13,8 +13,11 @@ namespace DienChanAPI.Controllers
     public class OrdersController : ApiController
     {
         [HttpGet]
-        public IHttpActionResult SendReport(int orderId, string email)
+        public IHttpActionResult SendReport(string token, int userId, int orderId, string email)
         {
+            if (!ApplicationHelper.IsTokenValid(token, userId))
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
+
             var order = OrdersLogic.GetOrder(orderId);
 
             if (order == null)
@@ -23,7 +26,7 @@ namespace DienChanAPI.Controllers
             var result = OrdersLogic.SendReport(order, email);
 
             if (!result.Success)
-                ApplicationLogHelper.Log(result.Message);
+                ApplicationHelper.Log(result.Message);
 
             return result.Success
                 ? Content(HttpStatusCode.OK, "OK")
@@ -31,8 +34,11 @@ namespace DienChanAPI.Controllers
         }
 
         [HttpGet]
-        public IHttpActionResult GetOrders()
+        public IHttpActionResult GetOrders(string token, int userId)
         {
+            if (!ApplicationHelper.IsTokenValid(token, userId))
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
+
             var orders = OrdersLogic.GetOrders();
 
             if (orders == null)
@@ -42,8 +48,11 @@ namespace DienChanAPI.Controllers
         }
 
         [HttpGet]
-        public IHttpActionResult GetOrder(int id)
+        public IHttpActionResult GetOrder(string token, int userId, int id)
         {
+            if (!ApplicationHelper.IsTokenValid(token, userId))
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
+
             var order = OrdersLogic.GetOrder(id);
 
             if (order == null)
@@ -53,9 +62,9 @@ namespace DienChanAPI.Controllers
         }
 
         [HttpPut]
-        public IHttpActionResult UpdateOrder(Order order)
+        public IHttpActionResult UpdateOrder(string token, int userId, Order order)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !ApplicationHelper.IsTokenValid(token, userId))
                 return Content(HttpStatusCode.BadRequest, "BadRequest");
 
             var orderDb = OrdersLogic.GetOrder(order.orderId);
@@ -66,7 +75,7 @@ namespace DienChanAPI.Controllers
             var result = OrdersLogic.UpdateOrder(order);
 
             if (!result.Success)
-                ApplicationLogHelper.Log(result.Message);
+                ApplicationHelper.Log(result.Message);
 
             return result.Success
                 ? Content(HttpStatusCode.OK, "OK")
@@ -74,15 +83,15 @@ namespace DienChanAPI.Controllers
         }
 
         [HttpPost]
-        public IHttpActionResult CreateOrder(Order order)
+        public IHttpActionResult CreateOrder(string token, int userId, Order order)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !ApplicationHelper.IsTokenValid(token, userId))
                 return Content(HttpStatusCode.BadRequest, "BadRequest");
 
             var result = OrdersLogic.CreateOrder(order);
 
             if (!result.Success)
-                ApplicationLogHelper.Log(result.Message);
+                ApplicationHelper.Log(result.Message);
 
             return result.Success
                 ? Content(HttpStatusCode.OK, "OK")
@@ -90,8 +99,11 @@ namespace DienChanAPI.Controllers
         }
 
         [HttpDelete]
-        public IHttpActionResult DeleteOrder(int id)
+        public IHttpActionResult DeleteOrder(string token, int userId, int id)
         {
+            if (!ApplicationHelper.IsTokenValid(token, userId))
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
+
             var order = OrdersLogic.GetOrder(id);
 
             if (order == null)
@@ -100,7 +112,7 @@ namespace DienChanAPI.Controllers
             var result = OrdersLogic.DeleteOrder(id);
 
             if (!result.Success)
-                ApplicationLogHelper.Log(result.Message);
+                ApplicationHelper.Log(result.Message);
 
             return result.Success
                 ? Content(HttpStatusCode.OK, "OK")

@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="ActionResult.cs" />
     <Compile Include="ApplicationLog.cs" />
+    <Compile Include="ApplicationToken.cs" />
     <Compile Include="Category.cs" />
     <Compile Include="Customer.cs" />
     <Compile Include="Item.cs" />

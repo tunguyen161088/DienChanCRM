@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationLogQuery.cs" />
+    <Compile Include="ApplicationQuery.cs" />
     <Compile Include="CustomersQuery.cs" />
     <Compile Include="ItemsQuery.cs" />
     <Compile Include="OrdersQuery.cs" />

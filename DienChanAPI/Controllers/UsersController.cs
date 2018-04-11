@@ -6,59 +6,54 @@ using System.Net.Http;
 using System.Web.Http;
 using DienChan.Entities;
 using DienChan.Logic;
+using DienChan.Logic.Helpers;
 
 namespace DienChanAPI.Controllers
 {
     public class UsersController : ApiController
     {
-        // GET api/<controller>
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<controller>/5
-        public User Get(int id)
-        {
-            return new User
-            {
-                id = 1,
-                email = "tunguyen161088@gmail.com",
-                firstName = "Tu",
-                lastName = "Nguyen",
-                permission = new UserPermission
-                {
-                    id = 2,
-                    permissionDescription = "Admin",
-                    permissionName = "Admin"
-                }
-            };
-        }
-
-        // POST api/<controller>
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/<controller>/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/<controller>/5
-        public void Delete(int id)
-        {
-        }
-
         [HttpPost]
-        public IHttpActionResult GetAuthentication(User user)
+        public IHttpActionResult GetAuthentication(User user, string apiKey)
         {
-            var userDb = UsersLogic.GetAuthentication(user.username, user.password);
+            if (!ModelState.IsValid)
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
+
+            var userDb = UsersLogic.GetAuthentication(user, apiKey);
 
             if (userDb == null)
                 return Content(HttpStatusCode.NotFound, "NotFound");
 
             return Content(HttpStatusCode.OK, userDb);
+        }
+
+        [HttpPost]
+        public IHttpActionResult Register(User user)
+        {
+            if (!ModelState.IsValid)
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
+
+            var userDb = UsersLogic.Register(user);
+
+            if (userDb == null)
+                return Content(HttpStatusCode.NotFound, "NotFound");
+
+            return Content(HttpStatusCode.OK, userDb);
+        }
+
+        [HttpPut]
+        public IHttpActionResult UpdateUser(User user)
+        {
+            if (!ModelState.IsValid)
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
+
+            var userDb = UsersLogic.GetUser(user);
+
+            if (userDb == null)
+                return Content(HttpStatusCode.NotFound, "NotFound");
+
+            var result = UsersLogic.UpdateUser(user);
+
+            return Content(HttpStatusCode.OK, result);
         }
     }
 }

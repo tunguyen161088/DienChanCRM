@@ -9,8 +9,11 @@ namespace DienChanAPI.Controllers
     public class ProductsController : ApiController
     {
         [HttpGet]
-        public IHttpActionResult GetProducts()
+        public IHttpActionResult GetProducts(string token, int userId)
         {
+            if(!ApplicationHelper.IsTokenValid(token, userId))
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
+
             var products = ProductsLogic.GetProducts();
 
             if (products == null)
@@ -20,8 +23,11 @@ namespace DienChanAPI.Controllers
         }
 
         [HttpGet]
-        public IHttpActionResult GetProduct(int id)
+        public IHttpActionResult GetProduct(string token, int userId, int id)
         {
+            if (!ApplicationHelper.IsTokenValid(token, userId))
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
+
             var product = ProductsLogic.GetProduct(id);
 
             if (product == null)
@@ -31,9 +37,9 @@ namespace DienChanAPI.Controllers
         }
 
         [HttpPut]
-        public IHttpActionResult UpdateProduct(Product product)
+        public IHttpActionResult UpdateProduct(string token, int userId, Product product)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !ApplicationHelper.IsTokenValid(token, userId))
                 return Content(HttpStatusCode.BadRequest, "BadRequest");
 
             var productDb = ProductsLogic.GetProduct(product.productId);
@@ -44,7 +50,7 @@ namespace DienChanAPI.Controllers
             var result = ProductsLogic.UpdateProduct(product);
 
             if (!result.Success)
-                ApplicationLogHelper.Log(result.Message);
+                ApplicationHelper.Log(result.Message);
 
             return result.Success 
                 ? Content(HttpStatusCode.OK, "OK") 
@@ -52,15 +58,15 @@ namespace DienChanAPI.Controllers
         }
 
         [HttpPost]
-        public IHttpActionResult CreateProduct(Product product)
+        public IHttpActionResult CreateProduct(string token, int userId, Product product)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !ApplicationHelper.IsTokenValid(token, userId))
                 return Content(HttpStatusCode.BadRequest, "BadRequest");
 
             var result = ProductsLogic.CreateProduct(product);
 
             if (!result.Success)
-                ApplicationLogHelper.Log(result.Message);
+                ApplicationHelper.Log(result.Message);
 
             return result.Success
                 ? Content(HttpStatusCode.OK, "OK")
@@ -68,8 +74,11 @@ namespace DienChanAPI.Controllers
         }
 
         [HttpDelete]
-        public IHttpActionResult DeleteProduct(int id)
+        public IHttpActionResult DeleteProduct(string token, int userId, int id)
         {
+            if (!ApplicationHelper.IsTokenValid(token, userId))
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
+
             var product = ProductsLogic.GetProduct(id);
 
             if (product == null)
@@ -78,7 +87,7 @@ namespace DienChanAPI.Controllers
             var result = ProductsLogic.DeleteProduct(id);
 
             if (!result.Success)
-                ApplicationLogHelper.Log(result.Message);
+                ApplicationHelper.Log(result.Message);
 
             return result.Success
                 ? Content(HttpStatusCode.OK, "OK")

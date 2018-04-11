@@ -27,5 +27,7 @@ namespace DienChan.DataAccess
 
         public static int HostPort => Convert.ToInt32(ConfigurationManager.AppSettings["HostPort"] ?? "0");
 
+        public static string ApiKey => ConfigurationManager.AppSettings["ApiKey"] ?? "";
+
     }
 }
