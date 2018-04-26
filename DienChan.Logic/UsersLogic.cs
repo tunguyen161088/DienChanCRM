@@ -34,8 +34,11 @@ namespace DienChan.Logic
             return userDb;
         }
 
-        public static ActionResult Register(User user)
+        public static ActionResult Register(User user, string apiKey)
         {
+            if (apiKey != Configuration.ApiKey)
+                return new ActionResult { Message = "Api Key invalid!" };
+
             return _query.CreateUser(user);
         }
 

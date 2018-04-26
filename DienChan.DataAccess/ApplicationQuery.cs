@@ -41,11 +41,8 @@ INSERT INTO [dbo].[ApplicationLog]
         public void UpdateToken(ApplicationToken at)
         {
             Db().Execute(@"
-UPDATE [dbo].[ApplicationToken]
-  SET
-      Active = 1
-WHERE UserId = @0
-      OR ExpirationDate < GETDATE();");
+DELETE FROM [dbo].[ApplicationToken]
+WHERE UserId = @0;", at.UserId);
 
             Db().Execute(@"
 INSERT INTO [dbo].[ApplicationToken]

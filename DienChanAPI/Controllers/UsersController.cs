@@ -27,12 +27,12 @@ namespace DienChanAPI.Controllers
         }
 
         [HttpPost]
-        public IHttpActionResult Register(User user)
+        public IHttpActionResult Register(User user, string apiKey)
         {
             if (!ModelState.IsValid)
                 return Content(HttpStatusCode.BadRequest, "BadRequest");
 
-            var userDb = UsersLogic.Register(user);
+            var userDb = UsersLogic.Register(user, apiKey);
 
             if (userDb == null)
                 return Content(HttpStatusCode.NotFound, "NotFound");
@@ -41,9 +41,9 @@ namespace DienChanAPI.Controllers
         }
 
         [HttpPut]
-        public IHttpActionResult UpdateUser(User user)
+        public IHttpActionResult UpdateUser(User user, string token)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !ApplicationHelper.IsTokenValid(token, user.id))
                 return Content(HttpStatusCode.BadRequest, "BadRequest");
 
             var userDb = UsersLogic.GetUser(user);
