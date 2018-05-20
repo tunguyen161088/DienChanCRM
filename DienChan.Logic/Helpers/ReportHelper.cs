@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DienChan.Entities;
+using DienChan.DataAccess;
 using iTextSharp.text.pdf;
 
 namespace DienChan.Logic.Helpers
@@ -73,13 +74,13 @@ namespace DienChan.Logic.Helpers
                         content.ShowText(order.items[i].quantity.ToString());
 
                         content.SetTextMatrix(380, posY);
-                        content.ShowText(order.items[i].unitPrice.ToString("C"));
+                        content.ShowText(order.items[i].unitPrice.ToString("C", Configuration.CurrentCurrency));
 
                         content.SetTextMatrix(435, posY);
-                        content.ShowText((order.items[i].unitPrice * order.items[i].quantity).ToString("C"));
+                        content.ShowText((order.items[i].unitPrice * order.items[i].quantity).ToString("C", Configuration.CurrentCurrency));
 
                         content.SetTextMatrix(485, posY);
-                        content.ShowText((order.items[i].unitPrice * order.items[i].quantity).ToString("C"));
+                        content.ShowText((order.items[i].unitPrice * order.items[i].quantity).ToString("C", Configuration.CurrentCurrency));
 
                         posY -= 18;
                     }
@@ -90,7 +91,7 @@ namespace DienChan.Logic.Helpers
                         content.ShowText("Tax");
 
                         content.SetTextMatrix(485, 293);
-                        content.ShowText(order.tax.ToString("C"));
+                        content.ShowText(order.tax.ToString("C", Configuration.CurrentCurrency));
                     }
 
                     if (order.discount > 0)
@@ -99,12 +100,12 @@ namespace DienChan.Logic.Helpers
                         content.ShowText("Discount");
 
                         content.SetTextMatrix(485, 275);
-                        content.ShowText("-" + order.discount.ToString("C"));
+                        content.ShowText("-" + order.discount.ToString("C", Configuration.CurrentCurrency));
                     }
 
                     content.SetFontAndSize(font, 12.0f);
                     content.SetTextMatrix(485, 250);
-                    content.ShowText(order.orderTotal.ToString("C"));
+                    content.ShowText(order.orderTotal.ToString("C", Configuration.CurrentCurrency));
 
                     content.EndText();
                     content.RestoreState();

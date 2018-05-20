@@ -40,9 +40,9 @@ INSERT INTO [dbo].[ApplicationLog]
 
         public void UpdateToken(ApplicationToken at)
         {
-            Db().Execute(@"
-DELETE FROM [dbo].[ApplicationToken]
-WHERE UserId = @0;", at.UserId);
+//            Db().Execute(@"
+//DELETE FROM [dbo].[ApplicationToken]
+//WHERE UserId = @0;", at.UserId);
 
             Db().Execute(@"
 INSERT INTO [dbo].[ApplicationToken]
@@ -56,7 +56,7 @@ INSERT INTO [dbo].[ApplicationToken]
            ,1
            ,@1
            ,GETDATE()
-           ,DATEADD(hh, 1, GETDATE()))", at.Token, at.UserId);
+           ,DATEADD(hh, 10, GETDATE()))", at.Token, at.UserId);
         }
 
         public ApplicationToken GetToken(string token, int userId)

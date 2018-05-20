@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace DienChan.DataAccess
 {
@@ -29,5 +30,6 @@ namespace DienChan.DataAccess
 
         public static string ApiKey => ConfigurationManager.AppSettings["ApiKey"] ?? "";
 
+        public static CultureInfo CurrentCurrency => new CultureInfo(ConfigurationManager.AppSettings["Currency"]??"en-US");        
     }
 }
