@@ -22,7 +22,7 @@ SELECT o.*,
        c.*
 FROM [DienChanCRM].[dbo].[Orders] o(NOLOCK)
      INNER JOIN [DienChanCRM].[dbo].[Customers] c(NOLOCK) ON o.CustomerID = c.CustomerID
-WHERE Active = 1;");
+WHERE o.Active = 1 Order By o.UpdateDate DESC;");
 
             var orders = Db().Fetch<Order, Customer>(query);
 
@@ -38,7 +38,7 @@ SELECT o.*,
        c.*
 FROM [DienChanCRM].[dbo].[Orders] o(NOLOCK)
      INNER JOIN [DienChanCRM].[dbo].[Customers] c(NOLOCK) ON o.CustomerID = c.CustomerID
-WHERE o.OrderID = @0 AND Active = 1;", orderId);
+WHERE o.OrderID = @0 AND o.Active = 1;", orderId);
 
             var order = Db().Fetch<Order, Customer>(query).FirstOrDefault();
 

@@ -20,5 +20,6 @@ namespace DienChan.Entities
         public string zip { get; set; }
         public string country { get; set; }
         public DateTime updateDate { get; set; }
+        public bool active { get; set; }
     }
 }

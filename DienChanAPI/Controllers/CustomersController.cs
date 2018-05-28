@@ -1,39 +1,101 @@
-﻿using System;
+﻿using DienChan.Logic.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using DienChan.Logic;
+using DienChan.Entities;
 
 namespace DienChanAPI.Controllers
 {
     public class CustomersController : ApiController
     {
-        // GET api/<controller>
-        public IEnumerable<string> Get()
+        [HttpGet]
+        public IHttpActionResult GetCustomers(string token, int userId)
         {
-            return new string[] { "value1", "value2" };
+            if (!ApplicationHelper.IsTokenValid(token, userId))
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
+
+            var customers = CustomersLogic.GetCustomers();
+
+            if (customers == null)
+                return Content(HttpStatusCode.NotFound, "NotFound");
+
+            return Content(HttpStatusCode.OK, customers);
         }
 
-        // GET api/<controller>/5
-        public string Get(int id)
+        [HttpGet]
+        public IHttpActionResult GetCustomer(string token, int userId, int id)
         {
-            return "value";
+            if (!ApplicationHelper.IsTokenValid(token, userId))
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
+
+            var customer = CustomersLogic.GetCustomer(id);
+
+            if (customer == null)
+                return Content(HttpStatusCode.NotFound, "NotFound");
+
+            return Content(HttpStatusCode.OK, customer);
         }
 
-        // POST api/<controller>
-        public void Post([FromBody]string value)
+        [HttpPut]
+        public IHttpActionResult UpdateCustomer(string token, int userId, Customer customer)
         {
+            if (!ModelState.IsValid || !ApplicationHelper.IsTokenValid(token, userId))
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
+
+            var customerDb = CustomersLogic.GetCustomer(customer.customerId);
+
+            if (customerDb == null)
+                return Content(HttpStatusCode.NotFound, "NotFound");
+
+            var result = CustomersLogic.UpdateCustomer(customer);
+
+            if (!result.Success)
+                ApplicationHelper.Log(result.Message);
+
+            return result.Success
+                ? Content(HttpStatusCode.OK, "OK")
+                : Content(HttpStatusCode.InternalServerError, result.Message);
         }
 
-        // PUT api/<controller>/5
-        public void Put(int id, [FromBody]string value)
+        [HttpPost]
+        public IHttpActionResult CreateCustomer(string token, int userId, Customer customer)
         {
+            if (!ModelState.IsValid || !ApplicationHelper.IsTokenValid(token, userId))
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
+
+            var result = CustomersLogic.CreateCustomer(customer);
+
+            if (!result.Success)
+                ApplicationHelper.Log(result.Message);
+
+            return result.Success
+                ? Content(HttpStatusCode.OK, "OK")
+                : Content(HttpStatusCode.InternalServerError, result.Message);
         }
 
-        // DELETE api/<controller>/5
-        public void Delete(int id)
+        [HttpDelete]
+        public IHttpActionResult DeleteCustomer(string token, int userId, int id)
         {
+            if (!ApplicationHelper.IsTokenValid(token, userId))
+                return Content(HttpStatusCode.BadRequest, "BadRequest");
+
+            var customerDb = CustomersLogic.GetCustomer(id);
+
+            if (customerDb == null)
+                return Content(HttpStatusCode.NotFound, "NotFound");
+
+            var result = CustomersLogic.DeleteCustomer(id);
+
+            if (!result.Success)
+                ApplicationHelper.Log(result.Message);
+
+            return result.Success
+                ? Content(HttpStatusCode.OK, "OK")
+                : Content(HttpStatusCode.InternalServerError, result.Message);
         }
     }
 }
